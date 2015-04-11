@@ -4,6 +4,9 @@ How I compile:
 	clear;javac @options @sources
 
 		options and sources are magic txt files
+		you need to make your own 'classes' directory, it didn't want to upload mine
+			if you want it, otherwise remove the -d line in options
+				it just keeps the .class files out of sight
 
 How I run:
 
