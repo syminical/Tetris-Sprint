@@ -33,7 +33,7 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		addMouseListener(this);	
 		clearGrid();
 		newShape();
-		JOptionPane.showMessageDialog(null, "                            TETRIS SPRINT\n                                by Tream\n\n* Right / Left arrow keys to move\n\n* Down / Space / wait to go down\n\n* Up to turn\n\n* C to swap shapes\n\n* R to restart\n\n\n Clear 20 lines as fast as you can!\n\n\n\nMAY TEH ODDS BE EVER IN YOUR FAVOUR!1!one!!", "Helpful Usage Box 9000", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, "                                  TETRIS SPRINT\n                                      by Tream\n\n* Right / Left arrow keys to move\n\n* Down / Space / wait to go down\n\n* Up to turn\n\n* C to swap shapes\n\n* R to restart\n\n\n Clear 20 lines as fast as you can!\n\n\nThank You SimplyPandaz for helping me squash bugs! <3\n\n\nMAY TEH ODDS BE EVER IN YOUR FAVOUR!1!one!!", "Helpful Usage Box 9000", JOptionPane.PLAIN_MESSAGE);
 
 	}
 
@@ -261,6 +261,8 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 		}
 
+		shapes.get(activeShape).fastDrop(1);
+		shapes.get(activeShape).drawShape(grid, 1);
 		repaint();
 	
 	}
@@ -371,7 +373,19 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 	}
 
+	private void drawWindow(Graphics g) {
+
+		g.setColor(Color.YELLOW);
+		g.fillRoundRect( 17, 51, 224, 114, 20, 20);
+		g.setColor(Color.BLACK);
+		g.fillRoundRect( 19, 54, 219, 107, 20, 20);
+		g.setColor(Color.YELLOW);
+		g.drawRoundRect( 21, 57, 214, 100, 20, 20);
+	}
+
 	private void drawTime(Graphics g) {
+
+		drawWindow(g);
 
 		endTimeS = "" + ((((int)(endTime / 1000)) > 60 )? ("" + ((int)(endTime / 1000 / 60)) + " m ") : "") + ( ( ((int)(endTime / 1000)) % 60 > 0)? ((((int)(endTime / 1000)) % 60) + " s") : "");
 
@@ -381,11 +395,11 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 		if (failed)
 
-			g.setColor(Color.DARK_GRAY);
+			g.setColor(Color.RED);
 	
 		else
 
-			g.setColor(Color.WHITE);
+			g.setColor(Color.GREEN);
 
 		g.setFont(timeFont);
 		if (endTimeS.length() > 0) {
