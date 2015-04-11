@@ -1,0 +1,17 @@
+
+How I compile:
+
+	clear;javac @options @sources
+
+		options and sources are magic txt files
+
+How I run:
+
+	java -cp classes Sorcery
+
+The jar is executable, but:
+
+	java -jar TetrisSprint.jar
+
+*all of these are run from the top directory (inside Tetris-Sprint)*
+
