@@ -6,7 +6,8 @@ import java.awt.Color;
 
 public class Shape {
 
-	protected int id, type, height, width, x, y, sy;
+	protected int id, type, height, width, x, y, sy, mx = -1, my = -1;
+	protected boolean saved = false;
 	protected int[][] grid = new int[4][4];
 	protected static int globalId = 0;
 
@@ -135,22 +136,37 @@ public class Shape {
 
 	private void bounce() {
 
-		if (x + width > 10)
+		if (x + width > 10) {
 
+			mx = x;
 			x = 10 - width;
+			saved = true;
 
-		if (x < 0)
+		}
 
+		if (x < 0) {
+
+			mx = x;
 			x = 0;
+			saved = true;
 
-		if (y < 0)
+		}
 
+		if (y < 0) {
+
+			my = y;
 			y = 0;
+			saved = true;
+	
+		}
 
-		if (y + height > 24)
+		if (y + height > 24) {
 
+			my = y;
 			y = 24 - height;
+			saved = true;
 
+		}
 
 		for (int i = 0; i < height; i++)
 
@@ -234,6 +250,23 @@ public class Shape {
 	}
 
 	public void turnRight() {
+
+		if (saved) {
+
+			saved = false;
+
+			if (mx != -1)
+
+				x = mx;
+
+			if (my != -1)
+
+				y = my;
+
+			mx = -1;
+			my = -1;
+
+		}
 
 		int[][] temp = new int[4][4];
 
