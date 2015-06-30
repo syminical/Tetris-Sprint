@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
-	public static JFrame box = new JFrame("Tetris Sprint");
+	public static JFrame box = new JFrame("Sprint");
 	public static ArrayList<Shape> shapes = new ArrayList<Shape>();
 	public static ArrayList<Movement> inputBuffer = new ArrayList<Movement>();
 	public static int activeShape = -1;
@@ -23,6 +23,7 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 	private static int rowsCleared = 0, rowsCap = 20;
 	private Font buttonFont = new Font("Comic Sans MS", Font.BOLD, 32);
 	private Font timeFont = new Font("Comic Sans MS", Font.PLAIN, 50);
+	private static Font infoFont = new Font("Comic Sans MS", Font.BOLD, 20);
 	private static Time keeper;
 
 	public Sorcery() {
@@ -33,7 +34,6 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		addMouseListener(this);	
 		clearGrid();
 		newShape();
-		JOptionPane.showMessageDialog(null, "                                  TETRIS SPRINT\n                                      by Tream\n\n* Right / Left arrow keys to move\n\n* Down / Space / wait to go down\n\n* Up to turn\n\n* C to swap shapes\n\n* R to restart\n\n\n Clear 20 lines as fast as you can!\n\n\nThank You SimplyPandaz for helping me squash bugs! <3\n\n\nMAY TEH ODDS BE EVER IN YOUR FAVOUR!1!one!!", "Helpful Usage Box 9000", JOptionPane.PLAIN_MESSAGE);
 
 	}
 
@@ -405,7 +405,7 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		if (endTimeS.length() > 0) {
 
 			g.drawString("Duration", ((250 - 198) / 2), (25 * 4));
-			g.drawString(endTimeS, ((250 - (endTimeS.length() * 21)) / 2), (25 * 6));
+			g.drawString(endTimeS, ((240 - (endTimeS.length() * 21)) / 2), (25 * 6));
 	
 		}
 		g.setFont(buttonFont);
@@ -500,6 +500,8 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 
 		//JOptionPane.showMessageDialog(null, "x: [" + e.getX() + "] | y: [" + e.getY() + "]", "The Box", JOptionPane.PLAIN_MESSAGE);
+
+		box.getContentPane().requestFocus();
 
 		if (!active && e.getX() >= (48) && e.getX() <= (202) && e.getY() >= (225) && e.getY() <= (282)) {
 			
@@ -602,20 +604,45 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 	public void keyTyped(KeyEvent e) {	
 	
+	}
+
+	private static void buildInfoBox() {
+
+		JFrame infoBox = new JFrame("Helpful Usage Box 9000");
+		JPanel infoPane = new JPanel();	
+		JEditorPane infoText = new JEditorPane();
+
+		infoPane.add(infoText);
+		infoPane.setBackground(Color.BLACK);
+		
+		infoText.setContentType("text/html");
+		infoText.setText("<p style = 'text-align: center;color: yellow;font-size: 15px;'><b>TETRIS SPRINT<br>by Tream<br><br>* Right / Left arrow keys to move<br><br>* Down / Space / wait to go down<br><br>* Up to turn<br><br>* C to swap shapes<br><br>* R to restart<br><br><br>Clear 20 lines as fast as you can!<br><br><br>Thank You SimplyPandaz for helping me squash bugs! &lt;3<br><br><br>MAY TEH ODDS BE EVER IN YOUR FAVOUR!1!one!!</b></p>");
+
+		infoText.setFont(infoFont);
+		infoText.setEditable(false);
+		infoText.setHighlighter(null);
+		infoText.setOpaque(false);
+
+		infoBox.setContentPane(infoPane);
+		infoBox.setResizable(false);
+		infoBox.pack();
+		infoBox.setLocationRelativeTo(null);
+		infoBox.setVisible(true);		
+
 	}	
 
 	public static void main(String args[]) {
 
-		Sorcery pane = new Sorcery();		
-		box.add(pane);
+		Sorcery pane = new Sorcery();
+		
 		box.setContentPane(pane);
 		box.getContentPane().setPreferredSize(new Dimension(251, 501));
-		box.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
-		box.setVisible(true);
+		box.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		box.setResizable(false);
 		box.pack();
 		box.setLocationRelativeTo(null);
-		pane.requestFocus();
+		box.setVisible(true);
+		buildInfoBox();
 
 	}		
 
