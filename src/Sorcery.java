@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 	public static JFrame box = new JFrame("Sprint");
+	public static JFrame infoBox;
 	public static ArrayList<Shape> shapes = new ArrayList<Shape>();
 	public static ArrayList<Movement> inputBuffer = new ArrayList<Movement>();
 	public static int activeShape = -1;
@@ -19,11 +20,13 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 	private double cstart, cend, cwstart, cwend, dtime;
 	private String endTimeS = "";
 	private static boolean swapped = false;
-	private int swapContainer = -1;
+	private boolean right = false, left = false;
+	private int swapContainer = -1, fps = 0, directionTracker = 0;
 	private static int rowsCleared = 0, rowsCap = 20;
 	private Font buttonFont = new Font("Comic Sans MS", Font.BOLD, 32);
 	private Font timeFont = new Font("Comic Sans MS", Font.PLAIN, 50);
 	private static Font infoFont = new Font("Comic Sans MS", Font.BOLD, 20);
+	private static Font tipFont = new Font("Comic Sans MS", Font.BOLD, 12);
 	private static Time keeper;
 
 	public Sorcery() {
@@ -106,7 +109,9 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		} else { 	
 
 			drawLines(g);	
-			drawMenu(g);		
+			drawMenu(g);
+
+			if (!first) { g.setFont(tipFont); g.setColor(Color.YELLOW); g.drawString("press i for more information", 48, 480); }		
 
 		}
 
@@ -344,6 +349,108 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		//repaint();
 
 	}
+	
+	private void start() {
+
+		double start = 0, end = start, totalTime = 0, totalFrames = 0, tracker = 0, sleepTime = 0, fUpdate = 0, mUpdate = 0, lUpdate = 0, holder;
+
+		clock = System.currentTimeMillis();		
+
+		while (true) {
+
+			start = System.currentTimeMillis();
+
+			if (start = lUpdate >= 100) {
+
+				move();
+
+				emptyBuffer();
+
+			}
+
+			if (start - mUpdate >= 1000) {
+
+				forceUpdateScreen();
+				mUpdate = System.currentTimeMillis();
+
+			}
+
+			if (start - fUpdate >= ((gameRunning)? 1000/30 : 1000)) {
+
+				repaint();
+				totalFrames++;
+				fUpdate = System.currentTimeMillis();
+
+			}
+
+			end = System.currentTimeMillis();
+
+			totalTime += (end - start);
+
+			sleepTime = (((gameRunning)? (1000/30) : 1000) - (end - start));
+
+			if (sleepTime <= 0)
+	
+				tracker += (-1) * sleepTime;
+
+			else {
+
+				if (tracker > 0) {
+
+					if (sleepTime <= tracker) {
+
+						tracker -= sleepTime;
+
+						sleepTime = 0;
+
+					} else {
+
+						sleepTime -= tracker;
+
+						tracker = 0;
+
+					}
+
+				}
+
+				try {
+
+					Thread.sleep((int)sleepTime);
+			
+				} catch(InterruptedException e) {
+
+					System.out.println("[sleep fail]");
+
+				};
+
+			}
+
+			totalTime += (System.currentTimeMillis() - end);
+
+			if (totalTime >= 1000) {
+
+				fps = (int)totalFrames;
+
+				totalFrames = 0;
+				totalTime = 0;
+				end = 0;
+				tracker = 0;
+
+			}
+
+		}
+
+	}
+
+	private void move() {
+
+		if (directionTracker == 0) return;
+
+		else if (directionTracker == 1) inputBuffer.add(new Movement(1));
+
+		else inputBuffer.add(new Movement(2));
+
+	}
 
 	private void emptyBuffer() {
 
@@ -481,134 +588,183 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 	}
 
-	public void mouseEntered(MouseEvent e) {
+	private void listeners() {
 
-	}
+		this.addMouseListener(new MouseAdapter() {
 
-	public void mouseExited(MouseEvent e) {
+			public void mouseClicked(MouseEvent e) {	
+	
+				//JOptionPane.showMessageDialog(null, "x: [" + e.getX() + "] | y: [" + e.getY() + "]", "The Box", JOptionPane.PLAIN_MESSAGE);
 
-	}	
-
-	public void mouseReleased(MouseEvent e) {
-
-	}
-
-	public void mousePressed(MouseEvent e) {
-
-	}
-
-	public void mouseClicked(MouseEvent e) {
-
-		//JOptionPane.showMessageDialog(null, "x: [" + e.getX() + "] | y: [" + e.getY() + "]", "The Box", JOptionPane.PLAIN_MESSAGE);
-
-		box.getContentPane().requestFocus();
-
-		if (!active && e.getX() >= (48) && e.getX() <= (202) && e.getY() >= (225) && e.getY() <= (282)) {
+				if (!active && e.getX() >= (48) && e.getX() <= (202) && e.getY() >= (225) && e.getY() <= (282)) {
 			
-			active = true;
-			repaint();
+					active = true;
+					repaint();
 
-		} else if (done && ((int)(System.currentTimeMillis() - endTimeTime)) > 2000 && e.getX() >= (48) && e.getX() <= (202) && e.getY() >= (225) && e.getY() <= (282))
+				} else if (done && ((int)(System.currentTimeMillis() - endTimeTime)) > 2000 && e.getX() >= (48) && e.getX() <= (202) && e.getY() >= (225) && e.getY() <= (282))
 
-			again();	
+					again();
 
-	}
+			}
 
-	public void keyReleased(KeyEvent e) {
+		});
 
-	}
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "right");
+		this.getActionMap().put("right", new AbstractAction() {
 
-	public void keyPressed(KeyEvent e) {
-		
-		//newShape();
-		//repaint();
-		//JOptionPane.showMessageDialog(null, "width: " + box.getContentPane().getWidth() + " | height: " + box.getContentPane().getHeight(), "The Box", JOptionPane.PLAIN_MESSAGE);
-		if (!active && e.getKeyCode() == KeyEvent.VK_SPACE) {
+			public void actionPerformed(ActionEvent e) {
 
-			active = true;
-			repaint();
-
-		} else if (active && !done) {
-
-			switch (e.getKeyCode()) {
-				
-				case KeyEvent.VK_RIGHT:
-
-					if (!shapes.get(activeShape).detectRight(grid, 0))	
+				if (!shapes.get(activeShape).detectRight(grid, 0)) {
 					
-						inputBuffer.add(new Movement(1));
+					right = true;
+					directionTracker = 1;
+
+				}
+
+			}
+
+		});
+
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "notRight");
+		this.getActionMap().put("notRight", new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				if (!shapes.get(activeShape).detectRight(grid, 0)) {	
 					
-					break;
-	
-				case KeyEvent.VK_LEFT:
-	
-					if (!shapes.get(activeShape).detectLeft(grid, 0))
+					right = false;
 
-						inputBuffer.add(new Movement(2));
+					if (left) directionTracker = -1; else directionTracker = 0;
 
-					break;
+				}
 
-				case KeyEvent.VK_UP:
+			}
+
+		});
+
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "left");
+		this.getActionMap().put("left", new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				if (!shapes.get(activeShape).detectLeft(grid, 0)) {
+
+					left = true;
+					directionTracker = -1;
+
+				}
+
+			}
+
+		});
+
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), "notLeft");
+		this.getActionMap().put("notLeft", new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				if (!shapes.get(activeShape).detectLeft(grid, 0)) {
+
+					left = false;
+					if (right) directionTracker = 1; else directionTracker = 0;
+
+				}
+
+			}
+
+		});
+
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "up");
+		this.getActionMap().put("up", new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				if (active && !done) {
 
 					shapes.get(activeShape).clearShape(grid, 0);
 					inputBuffer.add(new Movement(4));
-					break;
 
-				case KeyEvent.VK_DOWN:
+				}
 
-					if (!shapes.get(activeShape).detectDown(grid, 0))
+			}
+
+		});
+
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "down");
+		this.getActionMap().put("down", new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				if (active && !done && !shapes.get(activeShape).detectDown(grid, 0))
 
 						inputBuffer.add(new Movement(0));
 
-					break;
+			}
 
-				case KeyEvent.VK_SPACE:
+		});
 
-					inputBuffer.add(new Movement(3));
-					
-					break;
-/*
-				case 157:
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "space");
+		this.getActionMap().put("space", new AbstractAction() {
 
-					JOptionPane.showMessageDialog(null, "active: [" + active + "] | done: [" + done + "]", "The Box", JOptionPane.PLAIN_MESSAGE);
-					
-					break;
-*/
-				case 67:
+			public void actionPerformed(ActionEvent e) {
 
-					if (!swapped)
+				if (!active) active = true;
 
-						swap();
+				else if (active && !done) inputBuffer.add(new Movement(3));
 
-					break;
+				else if (done && ((int)(System.currentTimeMillis() - endTimeTime)) > 2000) again();
 
-				case 82:
+			}
 
-					restart();
-					
-					break;
+		});
 
-				default:
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0), "c");
+		this.getActionMap().put("c", new AbstractAction() {
 
-			 } 
+			public void actionPerformed(ActionEvent e) {
 
-			if (inputBuffer.size() > 0)
+				if (!swapped)
 
-				emptyBuffer();	
+					swap();
 
-		} else if (done && ((int)(System.currentTimeMillis() - endTimeTime)) > 2000 && e.getKeyCode() == KeyEvent.VK_SPACE)
+			}
 
-			again();
+		});
 
-	}
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), "r");
+		this.getActionMap().put("r", new AbstractAction() {
 
-	public void keyTyped(KeyEvent e) {	
-	
+			public void actionPerformed(ActionEvent e) {
+
+				if (active && !done) restart();
+
+			}
+
+		});
+
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_I, 0), "i");
+		this.getActionMap().put("i", new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				if (infoBox.isVisible()) infoBox.setVisible(false); 
+
+				else {
+
+					infoBox.setLocationRelativeTo(null);
+					infoBox.setVisible(true); 
+
+				}
+
+			}
+
+		});
+
 	}
 
 	private static void buildInfoBox() {
 
-		JFrame infoBox = new JFrame("Helpful Usage Box 9000");
+		infoBox = new JFrame("Helpful Usage Box 9000");
 		JPanel infoPane = new JPanel();	
 		JEditorPane infoText = new JEditorPane();
 
@@ -627,7 +783,18 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		infoBox.setResizable(false);
 		infoBox.pack();
 		infoBox.setLocationRelativeTo(null);
-		infoBox.setVisible(true);		
+		infoBox.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+		infoBox.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+
+				infoBox.setVisible(false);
+
+			}
+
+		});		
 
 	}	
 
@@ -643,6 +810,7 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		box.setLocationRelativeTo(null);
 		box.setVisible(true);
 		buildInfoBox();
+		box.getContentPane().requestFocus();
 
 	}		
 
