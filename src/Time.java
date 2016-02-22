@@ -15,7 +15,7 @@ public class Time extends Thread {
 				
 				if (System.currentTimeMillis() - lastDrop > (delay * 1000)) {
 	
-					temp.forceUpdateScreen();
+					temp.forceDrop();
 					lastDrop = System.currentTimeMillis();
 
 				} else

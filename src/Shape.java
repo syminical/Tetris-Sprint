@@ -37,13 +37,13 @@ public class Shape {
 
 				}
 
-			if (grid[spot][i] == 1)
+			if (grid[spot][i] == 1) {
 
 				if ( (yvar + height == 24) || ((yvar + spot + 1) <= 23 && (container[yvar + spot + 1][x + i] != 7 && container[yvar + spot + 1][x + i] != 8))) {
 
 					answer = true;
 
-				}
+				}}
 
 		}
 
@@ -379,6 +379,12 @@ public class Shape {
 
 		return type;
 		
+	}
+
+	public int getX() {
+
+		return x;
+
 	}
 
 	public int getY() {

@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class Sorcery extends JPanel implements KeyListener, MouseListener {
+public class Sorcery extends JPanel {
 
 	public static JFrame box = new JFrame("Sprint");
 	public static JFrame infoBox;
@@ -17,7 +17,7 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 	public static boolean active = false, first = false, done = false, failed = false;
 	private static ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
 	private static double startTime, endTime, endTimeTime;
-	private double cstart, cend, cwstart, cwend, dtime;
+	private double cstart, cend, cwstart, cwend, dtime, clock;
 	private String endTimeS = "";
 	private static boolean swapped = false;
 	private boolean right = false, left = false;
@@ -27,14 +27,12 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 	private Font timeFont = new Font("Comic Sans MS", Font.PLAIN, 50);
 	private static Font infoFont = new Font("Comic Sans MS", Font.BOLD, 20);
 	private static Font tipFont = new Font("Comic Sans MS", Font.BOLD, 12);
-	private static Time keeper;
 
 	public Sorcery() {
 
 		super();
+		listeners();
 		setBackground(Color.BLACK);
-		addKeyListener(this);
-		addMouseListener(this);	
 		clearGrid();
 		newShape();
 
@@ -55,9 +53,7 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		swapped = false;
 		swapContainer = -1;
 		rowsCleared = 0;
-		keeper = null;
 		newShape();
-		repaint();
 
 	}
 
@@ -75,10 +71,8 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		swapped = false;
 		swapContainer = -1;
 		rowsCleared = 0;
-		keeper = null;
 		newShape();
 		active = true;
-		repaint();
 	}
 
 	public void paint(Graphics g) {
@@ -87,22 +81,15 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 		if (active) {
 			
-			if (done) {
+			if (done) drawEnd(g); 
 
-				drawEnd(g);
+			else {
 
-			} else {
+				if (!first) first = true;
 
-				if (!first) {
-				
-					keeper = new Time();				
-					keeper.start();
-					first = true;	
-					startTime = System.currentTimeMillis();
-
-				}	
-
-				updateScreen(g);
+				shapes.get(activeShape).drawShape(grid, 0);
+				drawGrid(g);
+				drawLines(g);
 
 			}
 
@@ -111,7 +98,111 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 			drawLines(g);	
 			drawMenu(g);
 
-			if (!first) { g.setFont(tipFont); g.setColor(Color.YELLOW); g.drawString("press i for more information", 48, 480); }		
+			if (!first) { g.setFont(tipFont); g.setColor(Color.YELLOW); g.drawString("press i for more information", 46, 480); }		
+
+		}
+
+		drawFps(g);
+
+	}
+
+	private void begin() {
+
+		active = true;
+
+	}
+
+	private void start() {
+
+		double start = 0, end = start, totalTime = 0, totalFrames = 0, tracker = 0, sleepTime = 0, fUpdate = 0, mUpdate = 0, lUpdate = 0, holder;
+
+		startTime = System.currentTimeMillis();		
+
+		while (true) {
+
+			start = System.currentTimeMillis();
+
+			if (active && !done) {
+
+				if (start - lUpdate >= 80) {
+
+					move();
+					if (inputBuffer.size() > 0) emptyBuffer();
+					lUpdate = System.currentTimeMillis();
+
+				}
+
+				if ((start - mUpdate) >= 1000) {
+
+					forceDrop();
+					mUpdate = System.currentTimeMillis();
+
+				}
+
+			}
+
+			if (start - fUpdate >= ((active && !done)? 1000/30 : 1000)) {
+
+				repaint();
+				totalFrames++;
+				fUpdate = System.currentTimeMillis();
+
+			}
+
+			end = System.currentTimeMillis();
+
+			totalTime += (end - start);
+
+			sleepTime = (((active && !done)? (1000/30) : 1000) - (end - start));
+
+			if (sleepTime <= 0)
+	
+				tracker += (-1) * sleepTime;
+
+			else {
+
+				if (tracker > 0) {
+
+					if (sleepTime <= tracker) {
+
+						tracker -= sleepTime;
+
+						sleepTime = 0;
+
+					} else {
+
+						sleepTime -= tracker;
+
+						tracker = 0;
+
+					}
+
+				}
+
+				try {
+
+					Thread.sleep((int)sleepTime);
+			
+				} catch(InterruptedException e) {
+
+					System.out.println("[sleep fail]");
+
+				};
+
+			}
+
+			totalTime += (System.currentTimeMillis() - end);
+
+			if (totalTime >= 1000) {
+
+				fps = (int)totalFrames;
+
+				totalFrames = 0;
+				totalTime = 0;
+				end = 0;
+				tracker = 0;
+
+			}
 
 		}
 
@@ -268,173 +359,32 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 		shapes.get(activeShape).fastDrop(1);
 		shapes.get(activeShape).drawShape(grid, 1);
-		repaint();
 	
 	}
 
-	public void forceUpdateScreen() {
 
-		if ((System.currentTimeMillis() - dtime) > (keeper.getDelay() * 1000)) {
+	public void forceDrop() {
 
-			if (!shapes.get(activeShape).detectDown(grid, 0)) {
+		if (!shapes.get(activeShape).detectDown(grid, 0)) {
 				
-				inputBuffer.add(0, new Movement(0));
-				emptyBuffer();
-				repaint();	
+			inputBuffer.add(0, new Movement(0));
+			emptyBuffer();
+
+		} else {
+
+			if (shapes.get(activeShape).getY() < 4) {
+
+				failed = true;
+				done = true;
+				endTimeTime = System.currentTimeMillis();
+				endTime = System.currentTimeMillis() - startTime;
 
 			} else {
 
-				if (shapes.get(activeShape).getY() < 4) {
-
-					failed = true;
-					done = true;
-					endTimeTime = System.currentTimeMillis();
-					endTime = System.currentTimeMillis() - startTime;
-
-					repaint();
-
-				} else {
-
-					checkRows();
-					newShape();
-
-				}
-
-			}
-
-		}
-
-	}
-
-	private void updateScreen(Graphics g) {
-
-		cstart = System.currentTimeMillis();	
-	
-		if (clearBuffer.size() > 0)
-
-			clearRows();
-
-	
-		if (activeShape != -1) 
-
-			shapes.get(activeShape).drawShape(grid, 0);
-
-		drawGrid(g);
-		drawLines(g);
-
-		cend = System.currentTimeMillis();
-
-		cwstart = System.currentTimeMillis();
-
-		while (inputBuffer.size() > 0 && (System.currentTimeMillis() - cstart) > ( 33 - (cend - cstart) ))
-		
-			emptyBuffer();
-
-		cwend = System.currentTimeMillis();
-
-		if (cwend - cstart < 33) {
-
-			try {
-  
-				Thread.sleep( (33 - (int)cwend - (int)cstart ) );
-
-			} catch (Exception e) {
-
-				System.out.println("Sleep failed!");
-
-			}
-
-		}
-
-		//repaint();
-
-	}
-	
-	private void start() {
-
-		double start = 0, end = start, totalTime = 0, totalFrames = 0, tracker = 0, sleepTime = 0, fUpdate = 0, mUpdate = 0, lUpdate = 0, holder;
-
-		clock = System.currentTimeMillis();		
-
-		while (true) {
-
-			start = System.currentTimeMillis();
-
-			if (start = lUpdate >= 100) {
-
-				move();
-
-				emptyBuffer();
-
-			}
-
-			if (start - mUpdate >= 1000) {
-
-				forceUpdateScreen();
-				mUpdate = System.currentTimeMillis();
-
-			}
-
-			if (start - fUpdate >= ((gameRunning)? 1000/30 : 1000)) {
-
-				repaint();
-				totalFrames++;
-				fUpdate = System.currentTimeMillis();
-
-			}
-
-			end = System.currentTimeMillis();
-
-			totalTime += (end - start);
-
-			sleepTime = (((gameRunning)? (1000/30) : 1000) - (end - start));
-
-			if (sleepTime <= 0)
-	
-				tracker += (-1) * sleepTime;
-
-			else {
-
-				if (tracker > 0) {
-
-					if (sleepTime <= tracker) {
-
-						tracker -= sleepTime;
-
-						sleepTime = 0;
-
-					} else {
-
-						sleepTime -= tracker;
-
-						tracker = 0;
-
-					}
-
-				}
-
-				try {
-
-					Thread.sleep((int)sleepTime);
-			
-				} catch(InterruptedException e) {
-
-					System.out.println("[sleep fail]");
-
-				};
-
-			}
-
-			totalTime += (System.currentTimeMillis() - end);
-
-			if (totalTime >= 1000) {
-
-				fps = (int)totalFrames;
-
-				totalFrames = 0;
-				totalTime = 0;
-				end = 0;
-				tracker = 0;
+				checkRows();
+				clearRows();
+				shapes.get(activeShape).drawShape(grid, 0);
+				newShape();
 
 			}
 
@@ -448,14 +398,16 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 		else if (directionTracker == 1) inputBuffer.add(new Movement(1));
 
-		else inputBuffer.add(new Movement(2));
+		else if (directionTracker == -1) inputBuffer.add(new Movement(2));
+
+		else if (directionTracker == 2 && !shapes.get(activeShape).detectDown(grid, 0)) inputBuffer.add(new Movement(0));
+
 
 	}
 
 	private void emptyBuffer() {
 
 		inputBuffer.get(0).move();
-		repaint();
 
 		if (inputBuffer.get(0).getType() == 0)
 
@@ -517,7 +469,7 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		}
 		g.setFont(buttonFont);
 
-	}		
+	}
 
 	private void drawButton(Graphics g) {
 
@@ -562,6 +514,14 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 	}
 
+	private void drawFps(Graphics g) {
+
+		g.setColor(Color.WHITE);
+
+		g.drawString("fps: [" + fps + "]", 5, 15);
+
+	}
+
 	private void drawLines(Graphics g) {
 
 		g.setColor(Color.BLACK);
@@ -596,12 +556,20 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 	
 				//JOptionPane.showMessageDialog(null, "x: [" + e.getX() + "] | y: [" + e.getY() + "]", "The Box", JOptionPane.PLAIN_MESSAGE);
 
-				if (!active && e.getX() >= (48) && e.getX() <= (202) && e.getY() >= (225) && e.getY() <= (282)) {
-			
-					active = true;
-					repaint();
+				if (!active && e.getX() >= (48) && e.getX() <= (202) && e.getY() >= (225) && e.getY() <= (282)) begin();
 
-				} else if (done && ((int)(System.currentTimeMillis() - endTimeTime)) > 2000 && e.getX() >= (48) && e.getX() <= (202) && e.getY() >= (225) && e.getY() <= (282))
+				else if (!active && e.getX() >= 46 && e.getX() <= 208 && e.getY() >= 470 && e.getY() <= 479)
+
+					if (infoBox.isVisible()) infoBox.setVisible(false); 
+
+					else {
+
+						infoBox.setLocationRelativeTo(null);
+						infoBox.setVisible(true); 
+
+					}
+
+				else if (done && ((int)(System.currentTimeMillis() - endTimeTime)) > 2000 && e.getX() >= (48) && e.getX() <= (202) && e.getY() >= (225) && e.getY() <= (282))
 
 					again();
 
@@ -614,12 +582,9 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!shapes.get(activeShape).detectRight(grid, 0)) {
-					
-					right = true;
-					directionTracker = 1;
-
-				}
+				if (!right) inputBuffer.add(new Movement(1));
+				right = true;
+				directionTracker = 1;
 
 			}
 
@@ -630,13 +595,9 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!shapes.get(activeShape).detectRight(grid, 0)) {	
-					
-					right = false;
+				right = false;
 
-					if (left) directionTracker = -1; else directionTracker = 0;
-
-				}
+				if (left) directionTracker = -1; else directionTracker = 0;
 
 			}
 
@@ -647,12 +608,9 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!shapes.get(activeShape).detectLeft(grid, 0)) {
-
-					left = true;
-					directionTracker = -1;
-
-				}
+				if (!left) inputBuffer.add(new Movement(2));
+				left = true;
+				directionTracker = -1;
 
 			}
 
@@ -663,12 +621,9 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!shapes.get(activeShape).detectLeft(grid, 0)) {
-
 					left = false;
-					if (right) directionTracker = 1; else directionTracker = 0;
 
-				}
+					if (right) directionTracker = 1; else directionTracker = 0;
 
 			}
 
@@ -695,9 +650,18 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (active && !done && !shapes.get(activeShape).detectDown(grid, 0))
+				directionTracker = 2;
 
-						inputBuffer.add(new Movement(0));
+			}
+
+		});
+
+		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), "notDown");
+		this.getActionMap().put("notDown", new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				directionTracker = 0;
 
 			}
 
@@ -708,7 +672,7 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!active) active = true;
+				if (!active) begin();
 
 				else if (active && !done) inputBuffer.add(new Movement(3));
 
@@ -794,9 +758,27 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 
 			}
 
+		});
+
+		infoPane.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_I, 0), "i");
+		infoPane.getActionMap().put("i", new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				if (infoBox.isVisible()) infoBox.setVisible(false); 
+
+				else {
+
+					infoBox.setLocationRelativeTo(null);
+					infoBox.setVisible(true); 
+
+				}
+
+			}
+
 		});		
 
-	}	
+	}
 
 	public static void main(String args[]) {
 
@@ -812,7 +794,8 @@ public class Sorcery extends JPanel implements KeyListener, MouseListener {
 		buildInfoBox();
 		box.getContentPane().requestFocus();
 
-	}		
+		((Sorcery)(box.getContentPane())).start();
+
+	}
 
 }
-

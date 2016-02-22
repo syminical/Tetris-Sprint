@@ -66,19 +66,25 @@ public class Movement {
 
 	private void down() {
 
-		Sorcery.shapes.get(Sorcery.activeShape).influenceY(1);
+		if (!Sorcery.shapes.get(Sorcery.activeShape).detectDown(Sorcery.grid, 0))
+
+			Sorcery.shapes.get(Sorcery.activeShape).influenceY(1);
 
 	}
 
 	private void right() {
 
-		Sorcery.shapes.get(Sorcery.activeShape).influenceX(1);	
+		if (!Sorcery.shapes.get(Sorcery.activeShape).detectRight(Sorcery.grid, 0))
+
+			Sorcery.shapes.get(Sorcery.activeShape).influenceX(1);	
 
 	}
 
 	private void left() {
 
-		Sorcery.shapes.get(Sorcery.activeShape).influenceX(-1);
+		if (!Sorcery.shapes.get(Sorcery.activeShape).detectLeft(Sorcery.grid, 0))
+
+			Sorcery.shapes.get(Sorcery.activeShape).influenceX(-1);
 
 	}
 
