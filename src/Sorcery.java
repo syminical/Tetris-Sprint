@@ -12,15 +12,15 @@ public class Sorcery extends JPanel {
 	public static JFrame infoBox;
 	public static ArrayList<Shape> shapes = new ArrayList<Shape>();
 	public static ArrayList<Movement> inputBuffer = new ArrayList<Movement>();
-	public static int activeShape = -1, bottomTime = 0;
+	public static int activeShape = -1;
 	public static int[][] grid = new int[25][10];
-	public static boolean active = false, first = false, done = false, failed = false, force = false;
+	public static boolean active = false, first = false, done = false, failed = false;
 	private static ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
 	private static double startTime, endTime, endTimeTime;
 	private double cstart, cend, cwstart, cwend, dtime, clock;
 	private String endTimeS = "";
 	private static boolean swapped = false;
-	private boolean right = false, left = false, down = false, rCheck = false, lCheck = false, dCheck = false;
+	private boolean right = false, left = false;
 	private int swapContainer = -1, fps = 0, directionTracker = 0;
 	private static int rowsCleared = 0, rowsCap = 20;
 	private Font buttonFont = new Font("Comic Sans MS", Font.BOLD, 32);
@@ -54,9 +54,6 @@ public class Sorcery extends JPanel {
 		swapContainer = -1;
 		rowsCleared = 0;
 		newShape();
-		bottomTime = 0;
-		repaint();
-		startTime = System.currentTimeMillis();
 
 	}
 
@@ -76,9 +73,6 @@ public class Sorcery extends JPanel {
 		rowsCleared = 0;
 		newShape();
 		active = true;
-		bottomTime = 0;
-		repaint();
-		startTime = System.currentTimeMillis();
 	}
 
 	public void paint(Graphics g) {
@@ -104,18 +98,17 @@ public class Sorcery extends JPanel {
 			drawLines(g);	
 			drawMenu(g);
 
-			if (!first) { g.setFont(tipFont); g.setColor(Color.WHITE);; g.drawString("press i for more information", 46, 480); }		
+			if (!first) { g.setFont(tipFont); g.setColor(Color.YELLOW); g.drawString("press i for more information", 46, 480); }		
 
 		}
 
-		//drawFps(g);
+		drawFps(g);
 
 	}
 
 	private void begin() {
 
 		active = true;
-		repaint();
 
 	}
 
@@ -131,16 +124,15 @@ public class Sorcery extends JPanel {
 
 			if (active && !done) {
 
-				if (inputBuffer.size() > 0) emptyBuffer();
-
-				if (start - lUpdate >= 100) {
+				if (start - lUpdate >= 80) {
 
 					move();
+					if (inputBuffer.size() > 0) emptyBuffer();
 					lUpdate = System.currentTimeMillis();
 
 				}
 
-				if ((start - mUpdate) >= 1000 && !down) {
+				if ((start - mUpdate) >= 1000) {
 
 					forceDrop();
 					mUpdate = System.currentTimeMillis();
@@ -216,7 +208,7 @@ public class Sorcery extends JPanel {
 
 	}
 
-	public void checkRows() {
+	public static void checkRows() {
 				
 		boolean checker;
 
@@ -238,7 +230,7 @@ public class Sorcery extends JPanel {
 
 	}
 
-	private void clearRows() {
+	private static void clearRows() {
 
 		for (Integer container : clearBuffer) {
 
@@ -254,9 +246,9 @@ public class Sorcery extends JPanel {
 
 	}
 
-	private void deFrag() {
+	private static void deFrag() {
 
-		//shapes.get(activeShape).clearShape(grid, 1);
+		shapes.get(activeShape).clearShape(grid, 1);
 
 		int holder = 0;
 		
@@ -282,7 +274,6 @@ public class Sorcery extends JPanel {
 			done = true;
 			endTimeTime = System.currentTimeMillis();
 			endTime = System.currentTimeMillis() - startTime;
-			repaint();
 
 		}
 
@@ -380,29 +371,20 @@ public class Sorcery extends JPanel {
 			emptyBuffer();
 
 		} else {
-	
-			bottomTime++;
 
-			if (force || bottomTime >= 2) {
+			if (shapes.get(activeShape).getY() < 4) {
 
-				if (shapes.get(activeShape).getY() < 4) {
+				failed = true;
+				done = true;
+				endTimeTime = System.currentTimeMillis();
+				endTime = System.currentTimeMillis() - startTime;
 
-					failed = true;
-					done = true;
-					endTimeTime = System.currentTimeMillis();
-					endTime = System.currentTimeMillis() - startTime;
-					repaint();
+			} else {
 
-				} else {
-
-					shapes.get(activeShape).drawShape(grid, 0);
-					checkRows();
-					clearRows();
-					newShape();
-					bottomTime = 0;
-					force = false;
-
-				}
+				checkRows();
+				clearRows();
+				shapes.get(activeShape).drawShape(grid, 0);
+				newShape();
 
 			}
 
@@ -414,22 +396,22 @@ public class Sorcery extends JPanel {
 
 		if (directionTracker == 0) return;
 
-		else if (directionTracker == 1 && rCheck) inputBuffer.add(new Movement(1));
+		else if (directionTracker == 1) inputBuffer.add(new Movement(1));
 
-		else if (directionTracker == -1 && lCheck) inputBuffer.add(new Movement(2));
+		else if (directionTracker == -1) inputBuffer.add(new Movement(2));
 
 		else if (directionTracker == 2 && !shapes.get(activeShape).detectDown(grid, 0)) inputBuffer.add(new Movement(0));
-
-		if (right) rCheck = true;
-		if (left) lCheck = true;
-		if (down) dCheck = true;
 
 
 	}
 
-	private static void emptyBuffer() {
+	private void emptyBuffer() {
 
 		inputBuffer.get(0).move();
+
+		if (inputBuffer.get(0).getType() == 0)
+
+			dtime = System.currentTimeMillis();
 
 		inputBuffer.remove(0);
 
@@ -452,13 +434,12 @@ public class Sorcery extends JPanel {
 
 	private void drawWindow(Graphics g) {
 
-		g.setColor(new Color(200, 200, 200));
+		g.setColor(Color.YELLOW);
 		g.fillRoundRect( 17, 51, 224, 114, 20, 20);
 		g.setColor(Color.BLACK);
 		g.fillRoundRect( 19, 54, 219, 107, 20, 20);
-		g.setColor(new Color(150, 150, 150));
+		g.setColor(Color.YELLOW);
 		g.drawRoundRect( 21, 57, 214, 100, 20, 20);
-
 	}
 
 	private void drawTime(Graphics g) {
@@ -467,7 +448,17 @@ public class Sorcery extends JPanel {
 
 		endTimeS = "" + ((((int)(endTime / 1000)) > 60 )? ("" + ((int)(endTime / 1000 / 60)) + " m ") : "") + ( ( ((int)(endTime / 1000)) % 60 > 0)? ((((int)(endTime / 1000)) % 60) + " s") : "");
 
-		g.setColor(Color.WHITE);
+		if (endTime >= 180000)
+
+			failed = true;
+
+		if (failed)
+
+			g.setColor(Color.RED);
+	
+		else
+
+			g.setColor(Color.GREEN);
 
 		g.setFont(timeFont);
 		if (endTimeS.length() > 0) {
@@ -482,15 +473,15 @@ public class Sorcery extends JPanel {
 
 	private void drawButton(Graphics g) {
 
-		g.setColor(new Color(200, 200, 200));
+		g.setColor(Color.YELLOW);
 		g.fillRoundRect( (47), (222), (155), (57), 40, 40 );
 		g.setColor(Color.BLACK);
 		g.fillRoundRect( (25 * 2), (25 * 9), (25 * 6), (25 * 2), 40, 40 ); 	
-		g.setColor(new Color(150, 150, 150));
+		g.setColor(Color.YELLOW);
 		g.drawRoundRect( (52), (228), (145), (43), 40, 40);	
-		g.setColor(Color.WHITE);
+		//g.setColor(Color.WHITE);
 		g.setFont(buttonFont);
-		g.drawString("Click Me", (25 * 3 - 16), (261)); 
+		g.drawString("BEGIN", (25 * 3 - 1), (261)); 
 
 	}
 
@@ -592,7 +583,6 @@ public class Sorcery extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 				if (!right) inputBuffer.add(new Movement(1));
-
 				right = true;
 				directionTracker = 1;
 
@@ -606,7 +596,6 @@ public class Sorcery extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 				right = false;
-				rCheck = false;
 
 				if (left) directionTracker = -1; else directionTracker = 0;
 
@@ -620,9 +609,7 @@ public class Sorcery extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 				if (!left) inputBuffer.add(new Movement(2));
-
 				left = true;
-
 				directionTracker = -1;
 
 			}
@@ -635,7 +622,6 @@ public class Sorcery extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 					left = false;
-					lCheck = false;
 
 					if (right) directionTracker = 1; else directionTracker = 0;
 
@@ -664,10 +650,6 @@ public class Sorcery extends JPanel {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!down && shapes.get(activeShape).detectDown(grid, 0)) inputBuffer.add(new Movement(0));
-
-				down = true;
-
 				directionTracker = 2;
 
 			}
@@ -678,9 +660,6 @@ public class Sorcery extends JPanel {
 		this.getActionMap().put("notDown", new AbstractAction() {
 
 			public void actionPerformed(ActionEvent e) {
-
-				down = false;
-				dCheck = false;
 
 				directionTracker = 0;
 
@@ -757,7 +736,7 @@ public class Sorcery extends JPanel {
 		infoPane.setBackground(Color.BLACK);
 		
 		infoText.setContentType("text/html");
-		infoText.setText("<p style = 'text-align: center;color: white;font-size: 15px;'><b>TETRIS SPRINT<br>by Tream<br><br>* Right / Left arrow keys to move<br><br>* Down / Space / wait to go down<br><br>* Up to turn<br><br>* C to swap shapes<br><br>* R to restart<br><br><br>Clear 20 lines as fast as you can!<br><br><br>Thank You SimplyPandaz for helping me squash bugs! &lt;3<br><br><br>MAY TEH ODDS BE EVER IN YOUR FAVOUR!1!one!!</b></p>");
+		infoText.setText("<p style = 'text-align: center;color: yellow;font-size: 15px;'><b>TETRIS SPRINT<br>by Tream<br><br>* Right / Left arrow keys to move<br><br>* Down / Space / wait to go down<br><br>* Up to turn<br><br>* C to swap shapes<br><br>* R to restart<br><br><br>Clear 20 lines as fast as you can!<br><br><br>Thank You SimplyPandaz for helping me squash bugs! &lt;3<br><br><br>MAY TEH ODDS BE EVER IN YOUR FAVOUR!1!one!!</b></p>");
 
 		infoText.setFont(infoFont);
 		infoText.setEditable(false);

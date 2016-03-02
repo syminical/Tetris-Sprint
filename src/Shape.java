@@ -43,9 +43,7 @@ public class Shape {
 
 					answer = true;
 
-				}
-
-			}
+				}}
 
 		}
 
@@ -221,9 +219,9 @@ public class Shape {
 
 				influenceY(1);
 
-			//Sorcery.shapes.get(Sorcery.activeShape).drawShape(Sorcery.grid, 0);
-			Sorcery.force = true;
-			((Sorcery)(Sorcery.box.getContentPane())).forceDrop();
+			Sorcery.shapes.get(Sorcery.activeShape).drawShape(Sorcery.grid, 0);
+			Sorcery.checkRows();
+			Sorcery.newShape();
 
 		} else {
 
@@ -329,31 +327,31 @@ public class Shape {
 
 			case 0:
 
-				return new Color(255, 255, 255);
+				return Color.YELLOW;
 
 			case 1:
 
-				return new Color(235, 235, 235);
+				return Color.CYAN;
 
 			case 2:
 
-				return new Color(215, 215, 215);
+				return Color.PINK;
 
 			case 3:
 
-				return new Color(195, 195, 195);
+				return Color.BLUE;
 
 			case 4:
 
-				return new Color(175, 175, 175);
+				return Color.MAGENTA;
 
 			case 5:
 
-				return new Color(155, 155, 155);
+				return Color.GREEN;
 
 			case 6:
 
-				return new Color(135, 135, 135);
+				return Color.RED;
 
 			case 7:
 
@@ -361,8 +359,7 @@ public class Shape {
 
 			case 8:
 
-				return new Color(70, 70, 70);
-				//return Color.GRAY;
+				return Color.GRAY;
 
 			default: 
 		

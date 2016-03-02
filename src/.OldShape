@@ -1,0 +1,299 @@
+
+//theworldisquiethere
+
+import java.awt.Graphics;
+import java.awt.Color;
+
+public class Shape {
+
+	private int id, type, height, width, x, y;
+	private int[][] grid = new int[4][4];
+	private static int globalId = 0;
+
+	public Shape(int container) {
+
+		id = globalId;
+		globalId++;
+		magic(container);			
+
+	}	
+
+	private void magic(int container) {
+
+		switch (container) {
+
+			case 0:
+				square();
+				break;
+
+		}
+
+	}
+/*
+	public boolean detectDown() {
+
+		
+
+	}
+*/
+	public void clearShape(int[][] container) {
+
+		int x2 = x, y2 = y;
+
+		for (int i = 0; i < grid.length; i++) {
+		
+			for (int i2 = 0; i2 < grid[0].length; i2++) {
+
+				if (grid[i][i2] != 0) {
+
+					container[y2][x2] = 7;
+
+				}
+	
+				x2++;
+
+			}
+
+			x2 = x;
+			y2++;
+		
+		} 
+
+	}
+
+	public void drawShape(int[][] container) {
+
+		int x2 = x, y2 = y;
+
+		for (int i = 0; i < grid.length; i++) {
+		
+			for (int i2 = 0; i2 < grid[0].length; i2++) {
+
+				if (grid[i][i2] != 0) {
+
+					container[y2][x2] = type;
+
+				}
+	
+				x2++;
+
+			}
+
+			x2 = x;
+			y2++;
+		
+		}
+
+	}
+
+	public void influenceX(int container) {
+
+		x += container;
+
+	}
+
+	public void influenceY(int container) {
+
+		y += container;
+
+	}
+
+	public void turnLeft() {
+
+		//
+		switchDim();
+
+	}
+
+	public void turnRight() {
+
+		//
+		switchDim();
+
+	}
+
+	private void switchDim() {
+
+		int h = width, w = height;
+		height = h;
+		width = w;
+
+	}
+
+	public static Color colour(int container) {
+
+		switch(container) {
+
+			case 0:
+
+				return Color.YELLOW;
+
+			case 1:
+
+				return Color.CYAN;
+
+			case 2:
+
+				return Color.ORANGE;
+
+			case 3:
+
+				return Color.BLUE;
+
+			case 4:
+
+				return Color.PINK;
+
+			case 5:
+
+				return Color.GREEN;
+
+			case 6:
+
+				return Color.RED;
+
+			case 7:
+
+				return Color.BLACK;
+
+			default: 
+		
+				return Color.WHITE;				
+	
+		}
+
+	}
+
+	private void square() {
+
+		height = 2;
+		width = 2;
+		type = 0;
+		x = 4;
+		y = 9; //2
+		int[][] grid2 = new int[][] {
+ 
+			{1, 1, 0, 0}, 
+			{1, 1, 0, 0}, 
+			{0, 0, 0, 0}, 
+			{0, 0, 0, 0}
+
+		};
+
+		for (int i = 0; i < grid2.length; i++)
+		
+			for (int i2 = 0; i2 < grid2[0].length; i2++)
+
+				grid[i][i2] = grid2[i][i2];
+
+	}
+
+	private void stick() {
+
+		height = 4;
+		width = 1;
+		type = 1;
+		x = 5;
+		y = 0;
+		int[][] grid = new int[][] {
+ 
+			{1, 0, 0, 0}, 
+			{1, 0, 0, 0}, 
+			{1, 0, 0, 0}, 
+			{1, 0, 0, 0}
+
+		};
+
+	}
+
+	private void L1() {
+
+		height = 3;
+		width = 2;
+		type = 2;
+		x = 4;
+		y = 1;
+		int[][] grid = new int[][] {
+ 
+			{1, 0, 0, 0}, 
+			{1, 0, 0, 0}, 
+			{1, 1, 0, 0}, 
+			{0, 0, 0, 0}
+
+		};
+
+	}
+
+	private void L2() {
+
+		height = 3;
+		width = 2;
+		type = 3;
+		x = 4;
+		y = 1;
+		int[][] grid = new int[][] {
+ 
+			{0, 1, 0, 0}, 
+			{0, 1, 0, 0}, 
+			{1, 1, 0, 0}, 
+			{0, 0, 0, 0}
+
+		};
+
+	}
+
+	private void tri() {
+
+		height = 2;
+		width = 3;
+		type = 4;
+		x = 4;
+		y = 2;
+		int[][] grid = new int[][] {
+ 
+			{1, 1, 1, 0}, 
+			{0, 1, 0, 0}, 
+			{0, 0, 0, 0}, 
+			{0, 0, 0, 0}
+
+		};
+
+	}
+
+	private void zig1() {
+
+		height = 2;
+		width = 2;
+		type = 5;
+		x = 4;
+		y = 1;
+		int[][] grid = new int[][] {
+ 
+			{0, 1, 0, 0}, 
+			{1, 1, 0, 0}, 
+			{1, 0, 0, 0}, 
+			{0, 0, 0, 0}
+
+		};
+	}
+
+	private void zig2() {
+
+		height = 2;
+		width = 2;
+		type = 6;
+		x = 4;
+		y = 1;
+		int[][] grid = new int[][] {
+ 
+			{1, 0, 0, 0}, 
+			{1, 1, 0, 0}, 
+			{0, 1, 0, 0}, 
+			{0, 0, 0, 0}
+
+		};
+
+	}	
+
+}
+
