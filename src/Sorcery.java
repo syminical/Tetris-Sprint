@@ -17,10 +17,10 @@ public class Sorcery extends JPanel {
 	public static boolean active = false, first = false, done = false, failed = false, force = false;
 	private static ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
 	private static double startTime, endTime, endTimeTime;
-	private double cstart, cend, cwstart, cwend, dtime, clock;
+	private double cstart, cend, cwstart, cwend, dtime, clock, rDown = 0, lDown = 0, dDown = 0;
 	private String endTimeS = "";
 	private static boolean swapped = false;
-	private boolean right = false, left = false, down = false, rCheck = false, lCheck = false, dCheck = false;
+	private boolean right = false, left = false, down = false;
 	private int swapContainer = -1, fps = 0, directionTracker = 0;
 	private static int rowsCleared = 0, rowsCap = 20;
 	private Font buttonFont = new Font("Comic Sans MS", Font.BOLD, 32);
@@ -131,31 +131,27 @@ public class Sorcery extends JPanel {
 
 			if (active && !done) {
 
-				if (inputBuffer.size() > 0) emptyBuffer();
-
-				if (start - lUpdate >= 100) {
-
-					move();
-					lUpdate = System.currentTimeMillis();
-
-				}
-
-				if ((start - mUpdate) >= 1000 && !down) {
+				if ((start - mUpdate) >= 1000 && directionTracker != 2) {
 
 					forceDrop();
 					mUpdate = System.currentTimeMillis();
 
 				}
 
+				if ((start - lUpdate) >= 50) {
+
+					move();
+
+					lUpdate = System.currentTimeMillis();
+
+				}
+
+				if (inputBuffer.size() > 0) emptyBuffer();
+
 			}
 
-			if (start - fUpdate >= ((active && !done)? 1000/30 : 1000)) {
-
-				repaint();
-				totalFrames++;
-				fUpdate = System.currentTimeMillis();
-
-			}
+			repaint();
+			totalFrames++;
 
 			end = System.currentTimeMillis();
 
@@ -375,12 +371,12 @@ public class Sorcery extends JPanel {
 	public void forceDrop() {
 
 		if (!shapes.get(activeShape).detectDown(grid, 0)) {
-				
+
 			inputBuffer.add(0, new Movement(0));
 			emptyBuffer();
 
 		} else {
-	
+
 			bottomTime++;
 
 			if (force || bottomTime >= 2) {
@@ -414,16 +410,11 @@ public class Sorcery extends JPanel {
 
 		if (directionTracker == 0) return;
 
-		else if (directionTracker == 1 && rCheck) inputBuffer.add(new Movement(1));
+		else if (directionTracker == 1 && (System.currentTimeMillis() - rDown) > 200) inputBuffer.add(new Movement(1));
 
-		else if (directionTracker == -1 && lCheck) inputBuffer.add(new Movement(2));
+		else if (directionTracker == -1 && (System.currentTimeMillis() - lDown) > 200) inputBuffer.add(new Movement(2));
 
-		else if (directionTracker == 2 && !shapes.get(activeShape).detectDown(grid, 0)) inputBuffer.add(new Movement(0));
-
-		if (right) rCheck = true;
-		if (left) lCheck = true;
-		if (down) dCheck = true;
-
+		else if (directionTracker == 2 && (System.currentTimeMillis() - dDown) > 200) inputBuffer.add(new Movement(0));
 
 	}
 
@@ -591,7 +582,7 @@ public class Sorcery extends JPanel {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!right) inputBuffer.add(new Movement(1));
+				if (!right) { inputBuffer.add(new Movement(1)); rDown = System.currentTimeMillis(); }
 
 				right = true;
 				directionTracker = 1;
@@ -606,7 +597,6 @@ public class Sorcery extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 				right = false;
-				rCheck = false;
 
 				if (left) directionTracker = -1; else directionTracker = 0;
 
@@ -619,7 +609,7 @@ public class Sorcery extends JPanel {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!left) inputBuffer.add(new Movement(2));
+				if (!left) { inputBuffer.add(new Movement(2)); lDown = System.currentTimeMillis(); }
 
 				left = true;
 
@@ -635,7 +625,6 @@ public class Sorcery extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 					left = false;
-					lCheck = false;
 
 					if (right) directionTracker = 1; else directionTracker = 0;
 
@@ -664,7 +653,9 @@ public class Sorcery extends JPanel {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!down && shapes.get(activeShape).detectDown(grid, 0)) inputBuffer.add(new Movement(0));
+				if (!down) { inputBuffer.add(new Movement(0)); dDown = System.currentTimeMillis(); }
+
+				else if (shapes.get(activeShape).detectDown(grid, 0) && (System.currentTimeMillis() - rDown) > 1000) { directionTracker = 0; return; }
 
 				down = true;
 
@@ -680,7 +671,6 @@ public class Sorcery extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 				down = false;
-				dCheck = false;
 
 				directionTracker = 0;
 
