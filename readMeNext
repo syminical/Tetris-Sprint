@@ -6,15 +6,15 @@ How I compile:
 	clear;javac @options @sources
 
 		options and sources are magic txt files
-		you need to make your own 'classes' directory
+		you need to make your own 'class' directory
 			if you want it; otherwise remove the -d line in options
 				it just keeps the .class files out of sight
 
 How I run:
 
-	java -cp classes Sorcery
+	java -cp class Sorcery
 
-The jar is executable (double-clickable, but you can also:
+The jar is executable (double-clickable), but you can also:
 
 	java -jar TetrisSprint.jar
 

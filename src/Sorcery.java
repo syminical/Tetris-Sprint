@@ -456,7 +456,7 @@ public class Sorcery extends JPanel {
 
 		drawWindow(g);
 
-		endTimeS = "" + ((((int)(endTime / 1000)) > 60 )? ("" + ((int)(endTime / 1000 / 60)) + " m ") : "") + ( ( ((int)(endTime / 1000)) % 60 > 0)? ((((int)(endTime / 1000)) % 60) + " s") : "");
+		endTimeS = "" + ((((int)(endTime / 1000)) >= 60 ) ? ("" + ((int)(endTime / 1000 / 60)) + " m ") : "") + ( ( ((int)(endTime / 1000)) % 60 > 0)? ((((int)(endTime / 1000)) % 60) + " s") : ((endTime > 0) ? "" : " 0 s"));
 
 		g.setColor(Color.WHITE);
 
