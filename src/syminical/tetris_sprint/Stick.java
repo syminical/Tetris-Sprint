@@ -1,7 +1,6 @@
+package syminical.tetris_sprint;
 
-//theworldisquiethere
-
-public class Stick extends Shape {
+public class Stick extends Shapes {
 
 	public Stick() {
 

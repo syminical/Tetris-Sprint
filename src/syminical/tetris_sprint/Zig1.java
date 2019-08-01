@@ -1,23 +1,22 @@
+package syminical.tetris_sprint;
 
-//theworldisquiethere
+public class Zig1 extends Shapes {
 
-public class Zig2 extends Shape {
-
-	public Zig2() {
+	public Zig1() {
 
 		super();
 
 		height = 3;
 		width = 2;
-		type = 6;
+		type = 5;
 		x = 4;
 		y = 1;
 		
 		grid = new int[][] {
  
-			{1, 0, 0, 0}, 
-			{1, 1, 0, 0}, 
 			{0, 1, 0, 0}, 
+			{1, 1, 0, 0}, 
+			{1, 0, 0, 0}, 
 			{0, 0, 0, 0}
 
 		};

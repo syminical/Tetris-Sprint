@@ -1,7 +1,6 @@
+package syminical.tetris_sprint;
 
-//theworldisquiethere
-
-public class Square extends Shape {
+public class Square extends Shapes {
 
 	public Square() {
 

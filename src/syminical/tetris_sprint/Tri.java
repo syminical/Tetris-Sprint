@@ -1,7 +1,6 @@
+package syminical.tetris_sprint;
 
-//theworldisquiethere
-
-public class Tri extends Shape {
+public class Tri extends Shapes {
 
 	public Tri() {
 

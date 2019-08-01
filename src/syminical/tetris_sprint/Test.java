@@ -1,5 +1,4 @@
-
-//theworldisquiethere
+package syminical.tetris_sprint;
 
 import java.awt.*;
 import java.awt.event.*;

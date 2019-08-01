@@ -1,17 +1,16 @@
-
-//theworldisquiethere
+package syminical.tetris_sprint;
 
 import java.awt.Graphics;
 import java.awt.Color;
 
-public class Shape {
+public class Shapes {
 
 	protected int id, type, height, width, x, y, sy, mx = -1, my = -1;
 	protected boolean saved = false;
 	protected int[][] grid = new int[4][4];
 	protected static int globalId = 0;
 
-	public Shape() {
+	public Shapes() {
 		
 		id = globalId;
 		globalId++;
