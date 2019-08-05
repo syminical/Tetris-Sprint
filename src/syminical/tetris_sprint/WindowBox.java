@@ -35,7 +35,7 @@ public abstract class WindowBox<T> extends JFrame {
         burdenAtlas();
         buildBox();
 
-        this.add(WindowMap);
+        this.setContentPane(WindowMap);
         this.pack();
         this.setLocationRelativeTo(Anchor);
         if (Anchor == null)
@@ -61,7 +61,7 @@ public abstract class WindowBox<T> extends JFrame {
     public void mouseClicked(MouseEvent ME) {
         for (Zone Temp : Zones)
             if ( Temp.Shape().contains( ME.getPoint() )) {
-                Temp.clicked();
+                Temp.clicked(ME);
                 return;
             }
     }
@@ -71,7 +71,7 @@ public abstract class WindowBox<T> extends JFrame {
     public void mouseMoved(MouseEvent ME) {
         for (Zone Temp : Zones)
             if ( Temp.Shape().contains( ME.getPoint() )) {
-                Temp.entered();
+                Temp.entered(ME);
                 return;
             }
         defaultMouseMovedAction();
@@ -85,7 +85,7 @@ public abstract class WindowBox<T> extends JFrame {
     
     //--= public API =--
     
-    public void toggleVisiblity() { this.setVisible( !this.isVisible() ); }
+    public void toggleVisibility() { this.setVisible( !this.isVisible() ); }
     
     //Add a component to the window map.
     public void addComponent(Component C) {

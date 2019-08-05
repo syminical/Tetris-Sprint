@@ -1,6 +1,7 @@
 package syminical.tetris_sprint;
 
 import java.awt.*;
+import java.awt.event.*;
 
 public class Zone {
     private final WindowBox Parent;
@@ -15,8 +16,8 @@ public class Zone {
         return S;
     }
     
-    public void entered() {}
-    public void clicked() {}
+    public void entered(MouseEvent ME) {}
+    public void clicked(MouseEvent ME) {}
     
     public WindowBox Parent() { return Parent; }
 }

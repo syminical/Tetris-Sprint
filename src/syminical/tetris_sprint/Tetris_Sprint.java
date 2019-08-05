@@ -10,8 +10,9 @@ import java.util.*;
 public class Tetris_Sprint {
     
     public static Tetris_Sprint Instance;
-    private WindowBox MainBox, SettingsBox, InteractiveBox, DevBox;
-	private final Dimension MAIN_BOX_SIZE = new Dimension( 251, 501 ), SETTINGS_BOX_SIZE = new Dimension( 350, 300 ), INFO_BOX_SIZE = new Dimension( 300, 100 );
+    private WindowBox MainBox, SettingsBox, InfoBox, DevBox;
+	private final Dimension MAIN_BOX_SIZE = new Dimension( 251, 501 ), SETTINGS_BOX_SIZE = new Dimension( 200, 300 ), INFO_BOX_SIZE = new Dimension( 350, 300 ), DEV_BOX_SIZE = new Dimension( 251, 75 );
+    private String JavaLimitation = "what a let down lol";
     
     public Tetris_Sprint() {
         createWindows();
@@ -23,36 +24,39 @@ public class Tetris_Sprint {
             public void buildBox() {
                 //window mouse event zones  
                 //main button
-                Zones().add(new Zone(this, new Rectangle(48, 225, 154, 57)) {
+                Zones().add(new Zone(this, new Rectangle(49, 248, 155, 56)) {
                     @Override
-                    public void clicked() { /*Parent().tell(1);*/ }
+                    public void clicked(MouseEvent ME) { /*Parent().tell(0);*/ }
                 });
                 //info button
-                Zones().add(new Zone(this, new Rectangle(46, 470, 106, 9)) {
+                Zones().add(new Zone(this, new Rectangle(47, 496, 165, 11)) {
                     @Override
-                    public void clicked() { /*Parent().tell(1);*/ }
+                    public void clicked(MouseEvent ME) { 
+                        if (ME.getModifiers() == (MouseEvent.CTRL_MASK + MouseEvent.BUTTON1_MASK))
+                            Parent().tell(2);
+                        else
+                            Parent().tell(1);
+                    }
                 });
                 
                 //window customization
                 this.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
                 this.setResizable( false );
                 //this.setBackground( new Color( 0, 0, 0, 0 ) );
+                
+                this.addMouseListener(new MouseHandler(this));
+            }
+            
+            @Override
+            public void mouseClicked(MouseEvent ME) {
+                super.mouseClicked(ME);
+                
+                Parent().tell(ME.toString());
             }
             
             //Object Messaging, to trigger custom 'methods'.  
             public void tell(int n) {
-                if ( Parent() == null ) return;
-                /*switch (n) {
-                    case 0:
-                        Parent().startSettings();
-                        break;
-                    case 1:
-                        Parent().pickFiles();
-                        break;
-                    case 2:
-                        Parent().terminateProgram();
-                    default:
-                }*/
+                Parent().tell(n);
             }
         };
         
@@ -83,7 +87,7 @@ public class Tetris_Sprint {
         });
         
         //info box
-		SettingsBox = new WindowBox<Tetris_Sprint>(this, "Tetris - Sprint Info", SETTINGS_BOX_SIZE, null, null) {  
+		InfoBox = new WindowBox<Tetris_Sprint>(this, "Tetris - Sprint Info", INFO_BOX_SIZE, null, MainBox) {  
             public void buildBox() {
                 //window customization
                 //this.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
@@ -103,10 +107,63 @@ public class Tetris_Sprint {
             //Object Messaging, to trigger custom 'methods'.  
             public void tell(int n) {}
         };
+        
+        DevBox = new WindowBox<Tetris_Sprint>(this, "Dev Box", null, null, MainBox) {
+            
+            public void buildBox() { addComponent(new JLabel("Welcome to the Dev Box! =D")); }
+            
+            public void tell(int n) {
+                if (!isVisible()) return;
+                switch (n) {
+                    default:
+                        ((JLabel)(this.getContentPane().getComponents()[0])).setText(Parent().bandaid());
+                        this.pack();
+                        this.repaint();
+                }
+            }
+        };
+    }
+    
+    public void tell(int m) {
+        switch (m) {
+            case 0:
+                break;
+            case 1:
+                InfoBox.toggleVisibility();
+                break;
+            case 2:
+                DevBox.toggleVisibility();
+                break;
+            default:
+        }
+    }
+    
+    public void tell(String S) {
+        JavaLimitation = S;
+        DevBox.tell(42);    
+    }
+    
+    //outrageous
+    public String bandaid() {
+        return JavaLimitation;   
     }
     
     public static void main(String[] Args) {
         if (Instance == null)
             Instance = new Tetris_Sprint();            
+    }
+    
+    private class MouseHandler extends MouseAdapter {
+        
+        private final WindowBox PARENT;
+        
+        public MouseHandler(WindowBox Prnt) {
+           PARENT = Prnt;
+        }
+        
+        @Override
+        public void mouseClicked(MouseEvent ME) {
+            PARENT.mouseClicked(ME);   
+        }
     }
 }
