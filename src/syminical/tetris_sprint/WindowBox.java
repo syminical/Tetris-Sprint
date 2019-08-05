@@ -14,6 +14,7 @@ public abstract class WindowBox<T> extends JFrame {
     private Dimension Size;
 	private WindowAtlas WindowMap;
 	private ArrayList<Zone> Zones;
+    private ArrayList<Component> Components;
 	private KeyAction KA1, KA2, KA3;
     private Image[] Assets;
     private int closeOp, lastBackgroundImage;
@@ -31,6 +32,7 @@ public abstract class WindowBox<T> extends JFrame {
         Assets = As;
         Anchor = An;
         Zones = new ArrayList<Zone>();
+        Components = new ArrayList<Component>();
         
         burdenAtlas();
         buildBox();
@@ -87,8 +89,13 @@ public abstract class WindowBox<T> extends JFrame {
     
     public void toggleVisibility() { this.setVisible( !this.isVisible() ); }
     
+    public Component getComponent(int n) {
+        return Components.get(n);   
+    }
+    
     //Add a component to the window map.
     public void addComponent(Component C) {
+        Components.add(C);
         WindowMap.add(C);
     }
     
