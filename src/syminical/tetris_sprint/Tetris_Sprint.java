@@ -89,10 +89,6 @@ public class Tetris_Sprint {
         //info box
 		InfoBox = new WindowBox<Tetris_Sprint>(this, "Tetris - Sprint Info", INFO_BOX_SIZE, null, MainBox) {  
             public void buildBox() {
-                //window customization
-                //this.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
-                //this.setResizable( false );
-                //this.setBackground( new Color( 0, 0, 0, 0 ) );
                 JEditorPane JEP = new JEditorPane();
                 JEP.setBackground(Color.BLACK);
                 JEP.setContentType("text/html");
@@ -116,7 +112,7 @@ public class Tetris_Sprint {
                 if (!isVisible()) return;
                 switch (n) {
                     default:
-                        ((JLabel)(this.getContentPane().getComponents()[0])).setText(Parent().bandaid());
+                        ((JLabel)(this.getComponent(0))).setText(Parent().bandaid());
                         this.pack();
                         this.repaint();
                 }
