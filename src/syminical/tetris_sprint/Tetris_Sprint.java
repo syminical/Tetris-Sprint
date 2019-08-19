@@ -11,11 +11,14 @@ public class Tetris_Sprint {
     
     public static Tetris_Sprint Instance;
     private WindowBox MainBox, SettingsBox, InfoBox, DevBox;
+    private GameController GM;
 	private final Dimension MAIN_BOX_SIZE = new Dimension( 251, 501 ), SETTINGS_BOX_SIZE = new Dimension( 200, 300 ), INFO_BOX_SIZE = new Dimension( 350, 300 ), DEV_BOX_SIZE = new Dimension( 251, 75 );
     private String JavaLimitation = "what a let down lol";
     
     public Tetris_Sprint() {
+        GM = new GameController(this);
         createWindows();
+        GM.begin();
     }
     
     private void createWindows() {
@@ -61,7 +64,7 @@ public class Tetris_Sprint {
         };
         
         //game canvas
-        MainBox.addComponent( new JPanel() {            
+        /*MainBox.addComponent( new JPanel() {            
             public void paint(Graphics g) {
                 super.paint(g);
                 
@@ -84,7 +87,8 @@ public class Tetris_Sprint {
                 g.setColor(Color.WHITE);
                 g.drawString("press i for more information", 46, 480);
             }
-        });
+        });*/
+        MainBox.addComponent( GM.View() );
         
         //info box
 		InfoBox = new WindowBox<Tetris_Sprint>(this, "Tetris - Sprint Info", INFO_BOX_SIZE, null, MainBox) {  
@@ -106,16 +110,23 @@ public class Tetris_Sprint {
         
         DevBox = new WindowBox<Tetris_Sprint>(this, "Dev Box", null, null, MainBox) {
             
-            public void buildBox() { addComponent(new JLabel("Welcome to the Dev Box! =D")); }
+            public void buildBox() {
+                this.setAlwaysOnTop(true);
+                addComponent(new JLabel("Welcome to the Dev Box! =D   [fps: " + GM.Model().fps + "]"));
+                addComponent(new JLabel(">>> shoot your shot <<<"));
+            }
             
             public void tell(int n) {
                 if (!isVisible()) return;
                 switch (n) {
+                    case 1:
+                        ((JLabel)(this.getComponent(1))).setText(">>> " + Parent().bandaid() + " <<<");
+                        break;
                     default:
-                        ((JLabel)(this.getComponent(0))).setText(Parent().bandaid());
-                        this.pack();
-                        this.repaint();
+                        ((JLabel)(this.getComponent(0))).setText("Welcome to the Dev Box! =D   [fps: " + GM.Model().fps + "]");
                 }
+                this.pack();
+                this.repaint();
             }
         };
     }
@@ -130,13 +141,16 @@ public class Tetris_Sprint {
             case 2:
                 DevBox.toggleVisibility();
                 break;
+            case 3:
+                DevBox.tell(42);
+                break;
             default:
         }
     }
     
     public void tell(String S) {
         JavaLimitation = S;
-        DevBox.tell(42);    
+        DevBox.tell(1);    
     }
     
     //outrageous

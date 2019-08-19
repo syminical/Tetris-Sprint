@@ -6,26 +6,29 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class GameModel {
-    private final GameManager PARENT;
-    public static ArrayList<Shapes> shapes = new ArrayList<Shapes>();
-	public static ArrayList<Movement> inputBuffer = new ArrayList<Movement>();
-	public static int activeShape = -1, bottomTime = 0;
-	public static int[][] grid = new int[25][10];
-	public static boolean active = false, done = false, failed = false, force = false;
-	private static ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
-	private static double startTime, endTime, endTimeTime;
-	private double cstart, cend, cwstart, cwend, dtime, clock, rDown = 0, lDown = 0, dDown = 0;
-	private String endTimeS = "";
-	private static boolean swapped = false;
-	private boolean right = false, left = false, down = false;
-	private int swapContainer = -1, fps = 0, directionTracker = 0;
-	private static int rowsCleared = 0, rowsCap = 20;
-	private Font buttonFont = new Font("Comic Sans MS", Font.BOLD, 32);
-	private Font timeFont = new Font("Comic Sans MS", Font.PLAIN, 50);
+    private final GameController PARENT;
+    public ArrayList<Shapes> shapes = new ArrayList<Shapes>();
+	public ArrayList<Movement> inputBuffer = new ArrayList<Movement>();
+	public int activeShape = -1, bottomTime = 0;
+	public int[][] grid = new int[25][10];
+	public boolean active = false, done = false, failed = false, force = false, swapped = false, first = false, right = false, left = false, down = false, frameReady = false;
+	public ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
+	public double startTime, endTime, endTimeTime;
+	public double cstart, cend, cwstart, cwend, dtime, clock, rDown = 0, lDown = 0, dDown = 0;
+	public String endTimeS = "";
+	public int swapContainer = -1, fps = 0, directionTracker = 0;
+	public int rowsCleared = 0, rowsCap = 20, mode = 0;
     
-    public GameModel(GameManager GM) { PARENT = GM; }
+    public GameModel(GameController GM) { PARENT = GM; }
     
-	private void restart() {
+    public void begin() {
+        active = true;
+        clearGrid();
+        newShape();
+        mode = 1;
+    }
+    
+	public void restart() {
 		shapes.clear();
 		inputBuffer.clear();
 		activeShape = -1;
@@ -41,11 +44,10 @@ public class GameModel {
 		rowsCleared = 0;
 		newShape();
 		bottomTime = 0;
-		repaint();
 		startTime = System.currentTimeMillis();
 	}
 
-	private void again() {
+	public void again() {
 		shapes.clear();
 		inputBuffer.clear();
 		activeShape = -1;
@@ -61,97 +63,19 @@ public class GameModel {
 		newShape();
 		active = true;
 		bottomTime = 0;
-		repaint();
 		startTime = System.currentTimeMillis();
 	}
 
-	public void paint(Graphics g) {
-		super.paint(g);		
-
-		if (active) {
-			if (done) drawEnd(g); 
-			else {
-				if (!first) first = true;
-				shapes.get(activeShape).drawShape(grid, 0);
-				drawGrid(g);
-				drawLines(g);
-			}
-		} else { 	
-			drawLines(g);	
-			drawMenu(g);
-
-			if (!first) { g.setFont(tipFont); g.setColor(Color.WHITE); g.drawString("press i for more information", 46, 480); }		
-		}
-		//drawFps(g);
-	}
-
-	private void begin() {
-		active = true;
-		repaint();
-	}
-
-	private void start() {
-		double start = 0, end = start, totalTime = 0, totalFrames = 0, tracker = 0, sleepTime = 0, fUpdate = 0, mUpdate = 0, lUpdate = 0, holder;
-		startTime = System.currentTimeMillis();		
-        
-		while (true) {
-			start = System.currentTimeMillis();
-
-			if (active && !done) {
-
-				if ((start - mUpdate) >= 1000 && directionTracker != 2) {
-					forceDrop();
-					mUpdate = System.currentTimeMillis();
-				}
-
-				if ((start - lUpdate) >= 50) {
-					move();
-					lUpdate = System.currentTimeMillis();
-				}
-
-				if (inputBuffer.size() > 0) emptyBuffer();
-			}
-
-			repaint();
-			totalFrames++;
-			end = System.currentTimeMillis();
-			totalTime += (end - start);
-			sleepTime = (((active && !done)? (1000/30) : 1000) - (end - start));
-
-			if (sleepTime <= 0)
-				tracker += (-1) * sleepTime;
-			else {
-                
-				if (tracker > 0) {
-
-					if (sleepTime <= tracker) {
-						tracker -= sleepTime;
-						sleepTime = 0;
-					} else {
-						sleepTime -= tracker;
-						tracker = 0;
-					}
-				}
-
-				try {
-					Thread.sleep((int)sleepTime);
-				} catch(InterruptedException e) {
-					System.out.println("[sleep fail]");
-				}
-			}
-			totalTime += (System.currentTimeMillis() - end);
-
-			if (totalTime >= 1000) {
-				fps = (int)totalFrames;
-				totalFrames = 0;
-				totalTime = 0;
-				end = 0;
-				tracker = 0;
-			}
-		}
-	}
-
-	public void checkRows() {
+    public void end() {
+        fps = 0;   
+    }
+    
+    public void drawShapes() {
+        shapes.get(activeShape).drawShape(grid, 0);
+        frameReady = true;
+    }
+    
+	private void checkRows() {
 		boolean checker;
         
 		for (int i = shapes.get(activeShape).getY() + shapes.get(activeShape).getHeight() - 1; i > shapes.get(activeShape).getY() - 1; i--) {
@@ -201,38 +125,31 @@ public class GameModel {
 			done = true;
 			endTimeTime = System.currentTimeMillis();
 			endTime = System.currentTimeMillis() - startTime;
-			repaint();
+			//repaint();
 		}
 	}
 
-	private static void addShape(int container) {
+	private void addShape(int container) {
 
 		switch (container) {
-
 			case 0: 
 				shapes.add(new Square());
 				break;
-
 			case 1:
 				shapes.add(new Stick());
 				break;
-
 			case 2:
 				shapes.add(new L1());
 				break;
-
 			case 3:
 				shapes.add(new L2());
 				break;
-	
 			case 4:
 				shapes.add(new Tri());
 				break;
-
 			case 5:
 				shapes.add(new Zig1());
 				break;
-
 			case 6:
 				shapes.add(new Zig2());
 				break;
@@ -240,51 +157,46 @@ public class GameModel {
 		activeShape++;
 	}
 
-	private void swap() {
+	public void swap() {
 
 		if (swapContainer == -1) {
 			swapContainer = shapes.get(activeShape).getType();
 			shapes.get(activeShape).clearShape(grid, 0);
 			shapes.get(activeShape).clearShape(grid, 1);
 			newShape();			
-
 		} else {
-
 			int temp = shapes.get(activeShape).getType();
 
 			shapes.get(activeShape).clearShape(grid, 0);
 			shapes.get(activeShape).clearShape(grid, 1);
 
 			addShape(swapContainer);
-		
 			swapContainer = temp;
-
 			swapped = true;
-
 		}
 
 		shapes.get(activeShape).fastDrop(1);
 		shapes.get(activeShape).drawShape(grid, 1);
-	
 	}
 
 	public void forceDrop() {
 
 		if (!shapes.get(activeShape).detectDown(grid, 0)) {
-
-			inputBuffer.add(0, new Movement(0));
-			emptyBuffer();
+			/*inputBuffer.add(0, new Movement(0));
+			emptyBuffer();*/
+            shapes.get(activeShape).clearShape(grid, 0);
+            shapes.get(activeShape).influenceY(1);
 		} else {
 			bottomTime++;
 
-			if (force || bottomTime >= 2) {
+			if (bottomTime >= 2) {
 
 				if (shapes.get(activeShape).getY() < 4) {
 					failed = true;
 					done = true;
 					endTimeTime = System.currentTimeMillis();
 					endTime = System.currentTimeMillis() - startTime;
-					repaint();
+					//repaint();
 				} else {
 					shapes.get(activeShape).drawShape(grid, 0);
 					checkRows();
@@ -295,9 +207,10 @@ public class GameModel {
 				}
 			}
 		}
+        frameReady = false;
 	}
 
-	private void move() {
+	public void move() {
 
 		if (directionTracker == 0) return;
 
@@ -309,12 +222,12 @@ public class GameModel {
 
 	}
 
-	private static void emptyBuffer() {
+	public void emptyBuffer() {
 		inputBuffer.get(0).move();
 		inputBuffer.remove(0);
 	}
 
-	private void clearGrid() {
+	public void clearGrid() {
 
 		for (int i = 0; i < grid.length; i++)
 		
@@ -322,28 +235,14 @@ public class GameModel {
 				grid[i][i2] = 7;
 	}
 
-	private void drawGrid(Graphics g) {
-
-		for (int i = 0; i < 20; i++) {
-
-			for (int i2 = 0; i2 < grid[0].length; i2++) {
-
-				if (grid[i + 4][i2] != 7) {
-					g.setColor(Shapes.colour(grid[i + 4][i2]));
-					g.fillRect( (25 * i2), (25 * i), 25, 25);
-				}	
-			}
-		}
-	}
-
-	public static void newShape() {
+	public void newShape() {
 		int container = (int)(Math.random() * 7);
 		addShape(container);	
 		shapes.get(activeShape).updateShadow();
 		swapped = false;
 	}
 
-	private void listeners() {
+	/*private void listeners() {
 		this.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {	
 				//JOptionPane.showMessageDialog(null, "x: [" + e.getX() + "] | y: [" + e.getY() + "]", "The Box", JOptionPane.PLAIN_MESSAGE);
@@ -456,11 +355,5 @@ public class GameModel {
 				}
 			}
 		});
-	}
-    
-    //view API
-    public boolean active() { return active; }
-    public boolean done() { return done; }
-    public ArrayList<Shapes> Shapes() { return shapes; }
-    public int activeShape() { return activeShape; }
+	}*/
 }

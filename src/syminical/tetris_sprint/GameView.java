@@ -3,51 +3,55 @@ package syminical.tetris_sprint;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.*;
 
 public class GameView extends JPanel {
-    private final GameManager PARENT;
+    private final GameController PARENT;
+    private int mode = 0;
 	private Font buttonFont = new Font("Comic Sans MS", Font.BOLD, 32);
 	private Font timeFont = new Font("Comic Sans MS", Font.PLAIN, 50);
-    private boolean first = false;
+    private static Font tipFont = new Font("Comic Sans MS", Font.BOLD, 12);
     
-    public GameView(GameManager GM) {
+    public GameView(GameController GM) {
         super();
         PARENT = GM;
-		listeners();
 		setBackground(Color.BLACK);
-		clearGrid();
-		newShape();
     }
     
+    /*public void mode(int n) {
+        switch (n) {
+            case 1: mode = 1; repaint(); break;
+            case 2: mode = 2; break;
+            default: mode = 0;
+        }
+    }*/
+    
+    //View methods
     public void paint(Graphics g) {
-		super.paint(g);		
-
-		if (PARENT.Model().active()) {
-			if (PARENT.Model().done()) drawEnd(g); 
-			else {
-				if (!first) first = true;
-				PARENT.Model().shapes().get(PARENT.Model().shapes().activeShape()).drawShape(grid, 0);
-				drawGrid(g);
+		super.paint(g);
+        
+        switch (PARENT.Model().mode) {
+            case 1:
+                drawGrid(g);
+				
 				drawLines(g);
-			}
-		} else { 	
-			drawLines(g);	
-			drawMenu(g);
-
-			if (!first) { g.setFont(tipFont); g.setColor(Color.WHITE); g.drawString("press i for more information", 46, 480); }		
-		}
-		//drawFps(g);
+                break;
+            case 2:
+                drawEnd(g);
+                break;
+            default:
+                drawLines(g);	
+                drawButton(g);
+                g.setFont(tipFont); g.setColor(Color.WHITE); g.drawString("press i for more information", 46, 480);
+                
+        }
+		drawFps(g);
 	}
     
     private void drawEnd(Graphics g) {
 		drawGrid(g);
 		drawLines(g);
 		drawTime(g);
-		drawButton(g);
-	}
-
-	private void drawMenu(Graphics g) {
 		drawButton(g);
 	}
 
@@ -62,13 +66,13 @@ public class GameView extends JPanel {
 
 	private void drawTime(Graphics g) {
 		drawWindow(g);
-		endTimeS = "" + ((((int)(endTime / 1000)) >= 60 ) ? ("" + ((int)(endTime / 1000 / 60)) + " m ") : "") + ((((int)(endTime / 1000)) % 60 > 0) ? ((((int)(endTime / 1000)) % 60) + " s") : ((((int)(endTime / 1000)) >= 60) ? "" : "0 s"));
+		PARENT.Model().endTimeS = "" + ((((int)(PARENT.Model().endTime / 1000)) >= 60 ) ? ("" + ((int)(PARENT.Model().endTime / 1000 / 60)) + " m ") : "") + ((((int)(PARENT.Model().endTime / 1000)) % 60 > 0) ? ((((int)(PARENT.Model().endTime / 1000)) % 60) + " s") : ((((int)(PARENT.Model().endTime / 1000)) >= 60) ? "" : "0 s"));
 		g.setColor(Color.WHITE);
 		g.setFont(timeFont);
         
-		if (endTimeS.length() > 0) {
+		if (PARENT.Model().endTimeS.length() > 0) {
 			g.drawString("Duration", ((250 - 198) / 2), (25 * 4));
-			g.drawString(endTimeS, ((240 - (endTimeS.length() * 21)) / 2), (25 * 6));
+			g.drawString(PARENT.Model().endTimeS, ((240 - (PARENT.Model().endTimeS.length() * 21)) / 2), (25 * 6));
 		}
 		g.setFont(buttonFont);
 	}
@@ -84,23 +88,15 @@ public class GameView extends JPanel {
 		g.setFont(buttonFont);
 		g.drawString("Click Me", (25 * 3 - 16), (261)); 
     }
-    
-    private void clearGrid() {
-
-		for (int i = 0; i < grid.length; i++)
-		
-			for (int i2 = 0; i2 < grid[0].length; i2++)
-				grid[i][i2] = 7;
-	}
 
 	private void drawGrid(Graphics g) {
 
 		for (int i = 0; i < 20; i++) {
 
-			for (int i2 = 0; i2 < grid[0].length; i2++) {
+			for (int i2 = 0; i2 < PARENT.Model().grid[0].length; i2++) {
 
-				if (grid[i + 4][i2] != 7) {
-					g.setColor(Shapes.colour(grid[i + 4][i2]));
+				if (PARENT.Model().grid[i + 4][i2] != 7) {
+					g.setColor(Shapes.colour(PARENT.Model().grid[i + 4][i2]));
 					g.fillRect( (25 * i2), (25 * i), 25, 25);
 				}	
 			}
@@ -109,7 +105,7 @@ public class GameView extends JPanel {
 
 	private void drawFps(Graphics g) {
 		g.setColor(Color.WHITE);
-		g.drawString("fps: [" + fps + "]", 5, 15);
+		g.drawString("fps: [" + PARENT.Model().fps + "]", 5, 15);
 	}
 
 	private void drawLines(Graphics g) {
