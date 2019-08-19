@@ -14,3 +14,6 @@ src/syminical/tetris_sprint/WindowBox.java
 src/syminical/tetris_sprint/Zig1.java
 src/syminical/tetris_sprint/Zig2.java
 src/syminical/tetris_sprint/Zone.java
+src/syminical/tetris_sprint/GameController.java
+src/syminical/tetris_sprint/GameModel.java
+src/syminical/tetris_sprint/GameView.java
