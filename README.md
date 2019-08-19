@@ -5,4 +5,3 @@ This project is currently being worked on. Please check the 'latestRelease' bran
 
 Inspired by http://www.tetrisfriends.com/games/Sprint/game.php , wanted to see if I could do it. (RIP)
 
-the world is quiet here
