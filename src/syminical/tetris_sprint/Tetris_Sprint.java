@@ -13,7 +13,6 @@ public class Tetris_Sprint {
     private WindowBox MainBox, SettingsBox, InfoBox, DevBox;
     private GameController GM;
 	private final Dimension MAIN_BOX_SIZE = new Dimension( 251, 501 ), SETTINGS_BOX_SIZE = new Dimension( 200, 300 ), INFO_BOX_SIZE = new Dimension( 350, 300 ), DEV_BOX_SIZE = new Dimension( 251, 75 );
-    private String JavaLimitation = "what a let down lol";
     
     public Tetris_Sprint() {
         GM = new GameController(this);
@@ -23,7 +22,7 @@ public class Tetris_Sprint {
     
     private void createWindows() {
         //Start view, 5 backgrounds, 3 buttons.
-		MainBox = new WindowBox<Tetris_Sprint>(this, "Tetris - Sprint", MAIN_BOX_SIZE, null, null) {  
+		MainBox = new WindowBox(this, "Tetris - Sprint", MAIN_BOX_SIZE, null, null) {  
             public void buildBox() {
                 //window mouse event zones  
                 //main button
@@ -56,42 +55,11 @@ public class Tetris_Sprint {
                 
                 Parent().tell(ME.toString());
             }
-            
-            //Object Messaging, to trigger custom 'methods'.  
-            public void tell(int n) {
-                Parent().tell(n);
-            }
         };
-        
-        //game canvas
-        /*MainBox.addComponent( new JPanel() {            
-            public void paint(Graphics g) {
-                super.paint(g);
-                
-                this.setBackground(Color.BLACK);
-                
-                //click me button
-                this.setOpaque(true);
-                g.setColor(new Color(200, 200, 200));
-                g.fillRoundRect( (47), (222), (155), (57), 40, 40 );
-                g.setColor(Color.BLACK);
-                g.fillRoundRect( (25 * 2), (25 * 9), (25 * 6), (25 * 2), 40, 40 ); 	
-                g.setColor(new Color(150, 150, 150));
-                g.drawRoundRect( (52), (228), (145), (43), 40, 40);	
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Comic Sans MS", Font.BOLD, 32));
-                g.drawString("Click Me", (25 * 3 - 16), (261));
-                
-                //information message button
-                g.setFont(new Font("Comic Sans MS", Font.BOLD, 12)); 
-                g.setColor(Color.WHITE);
-                g.drawString("press i for more information", 46, 480);
-            }
-        });*/
         MainBox.addComponent( GM.View() );
         
         //info box
-		InfoBox = new WindowBox<Tetris_Sprint>(this, "Tetris - Sprint Info", INFO_BOX_SIZE, null, MainBox) {  
+		InfoBox = new WindowBox(this, "Tetris - Sprint Info", INFO_BOX_SIZE, null, MainBox) {  
             public void buildBox() {
                 JEditorPane JEP = new JEditorPane();
                 JEP.setBackground(Color.BLACK);
@@ -104,12 +72,10 @@ public class Tetris_Sprint {
                 this.addComponent( JEP );
             }
             
-            //Object Messaging, to trigger custom 'methods'.  
-            public void tell(int n) {}
+            //Object Messaging, to trigger custom 'methods'.
         };
         
-        DevBox = new WindowBox<Tetris_Sprint>(this, "Dev Box", null, null, MainBox) {
-            
+        DevBox = new WindowBox(this, "Dev Box", null, null, MainBox) {
             public void buildBox() {
                 this.setAlwaysOnTop(true);
                 addComponent(new JLabel("Welcome to the Dev Box! =D   [fps: " + GM.Model().fps + "]"));
@@ -117,16 +83,17 @@ public class Tetris_Sprint {
             }
             
             public void tell(int n) {
-                if (!isVisible()) return;
+                //if (!isVisible()) return;
                 switch (n) {
-                    case 1:
-                        ((JLabel)(this.getComponent(1))).setText(">>> " + Parent().bandaid() + " <<<");
-                        break;
                     default:
                         ((JLabel)(this.getComponent(0))).setText("Welcome to the Dev Box! =D   [fps: " + GM.Model().fps + "]");
                 }
                 this.pack();
                 this.repaint();
+            }
+            
+            public void tell(String S) {
+                ((JLabel)(this.getComponent(1))).setText(">>> " + S + " <<<");
             }
         };
     }
@@ -149,14 +116,10 @@ public class Tetris_Sprint {
     }
     
     public void tell(String S) {
-        JavaLimitation = S;
-        DevBox.tell(1);    
+        DevBox.tell(S);    
     }
     
-    //outrageous
-    public String bandaid() {
-        return JavaLimitation;   
-    }
+    public void tell(int n, String S ) {}
     
     public static void main(String[] Args) {
         if (Instance == null)
@@ -164,7 +127,6 @@ public class Tetris_Sprint {
     }
     
     private class MouseHandler extends MouseAdapter {
-        
         private final WindowBox PARENT;
         
         public MouseHandler(WindowBox Prnt) {
@@ -175,5 +137,9 @@ public class Tetris_Sprint {
         public void mouseClicked(MouseEvent ME) {
             PARENT.mouseClicked(ME);   
         }
+    }
+    
+    private class KeyHandler extends KeyAdapter {
+        
     }
 }

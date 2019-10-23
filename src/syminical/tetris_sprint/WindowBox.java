@@ -8,9 +8,9 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.border.*;
 
-public abstract class WindowBox<T> extends JFrame {
+public abstract class WindowBox extends JFrame {
 
-	private T Parent; //Maybe this could be better.
+	private Tetris_Sprint Parent;
     private Dimension Size;
 	private WindowAtlas WindowMap;
 	private ArrayList<Zone> Zones;
@@ -23,7 +23,7 @@ public abstract class WindowBox<T> extends JFrame {
     //--= Constructor(s) =--
     //...I do not want to overload constructors...too much clutter.   (._ .)
     
-	public WindowBox(T P, String N, Dimension S, Image[] As, Component An) {
+	public WindowBox(Tetris_Sprint P, String N, Dimension S, Image[] As, Component An) {
         
         super(N);
         
@@ -56,9 +56,11 @@ public abstract class WindowBox<T> extends JFrame {
     //Customize JFrame.
     public abstract void buildBox();
     
-    public abstract void tell(int n);
+    //v-= Override these to customize messaging & mouse event responses. =-v
     
-    //v-= Override these to customize mouse event responses. =-v
+    public void tell(int n) { Parent().tell(n); }
+    public void tell(String S) { Parent().tell(S); }
+    public void tell(int n, String S) { Parent().tell(n, S); }
     
     public void mouseClicked(MouseEvent ME) {
         for (Zone Temp : Zones)
@@ -100,7 +102,7 @@ public abstract class WindowBox<T> extends JFrame {
     }
     
     public ArrayList Zones() { return Zones; }
-    public T Parent() { return Parent; }
+    public Tetris_Sprint Parent() { return Parent; }
     public int lastBackgroundImage() { return lastBackgroundImage; }
     public Component Anchor() { return Anchor; }
 }
