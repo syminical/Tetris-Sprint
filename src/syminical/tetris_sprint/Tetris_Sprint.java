@@ -11,13 +11,13 @@ public class Tetris_Sprint {
     
     public static Tetris_Sprint Instance;
     private WindowBox MainBox, SettingsBox, InfoBox, DevBox;
-    private GameController GM;
+    public GameController GC;
 	private final Dimension MAIN_BOX_SIZE = new Dimension( 251, 501 ), SETTINGS_BOX_SIZE = new Dimension( 200, 300 ), INFO_BOX_SIZE = new Dimension( 350, 300 ), DEV_BOX_SIZE = new Dimension( 251, 75 );
     
     public Tetris_Sprint() {
-        GM = new GameController(this);
+        GC = new GameController(this);
         createWindows();
-        GM.begin();
+        GC.begin();
     }
     
     private void createWindows() {
@@ -47,16 +47,17 @@ public class Tetris_Sprint {
                 //this.setBackground( new Color( 0, 0, 0, 0 ) );
                 
                 this.addMouseListener(new MouseHandler(this));
+                this.addKeyListener(new KeyHandler(this));
             }
             
             @Override
             public void mouseClicked(MouseEvent ME) {
                 super.mouseClicked(ME);
                 
-                Parent().tell(ME.toString());
+                Parent().tell(20, ME.toString());
             }
         };
-        MainBox.addComponent( GM.View() );
+        MainBox.addComponent( GC.View() );
         
         //info box
 		InfoBox = new WindowBox(this, "Tetris - Sprint Info", INFO_BOX_SIZE, null, MainBox) {  
@@ -75,25 +76,33 @@ public class Tetris_Sprint {
             //Object Messaging, to trigger custom 'methods'.
         };
         
-        DevBox = new WindowBox(this, "Dev Box", null, null, MainBox) {
+        DevBox = new WindowBox(this, "Dev Box", null, null, null) {
             public void buildBox() {
                 this.setAlwaysOnTop(true);
-                addComponent(new JLabel("Welcome to the Dev Box! =D   [fps: " + GM.Model().fps + "]"));
+                addComponent(new JLabel("Welcome to the Dev Box! =D   [fps: " + GC.Model().fps + "]"));
                 addComponent(new JLabel(">>> shoot your shot <<<"));
+                addComponent(new JLabel("[ prev key: NONE ]"));
+                addComponent(new JLabel("[ curr key: NONE ]"));
             }
             
             public void tell(int n) {
                 //if (!isVisible()) return;
                 switch (n) {
                     default:
-                        ((JLabel)(this.getComponent(0))).setText("Welcome to the Dev Box! =D   [fps: " + GM.Model().fps + "]");
+                        ((JLabel)(this.getComponent(0))).setText("Welcome to the Dev Box! =D   [fps: " + GC.Model().fps + "]");
                 }
                 this.pack();
                 this.repaint();
             }
             
-            public void tell(String S) {
-                ((JLabel)(this.getComponent(1))).setText(">>> " + S + " <<<");
+            public void tell(int n, String S) {
+                switch (n) {
+                    case 20: ((JLabel)(this.getComponent(1))).setText(">>> " + S + " <<<"); break;
+                    case 21: ((JLabel)(this.getComponent(2))).setText("[ prev key: " + S + " ]"); break;
+                    case 22: ((JLabel)(this.getComponent(3))).setText("[ curr key: " + S + " ]"); break;
+                    default:
+                }
+                repaint();//this may need to be moved later, but it is important
             }
         };
     }
@@ -115,11 +124,17 @@ public class Tetris_Sprint {
         }
     }
     
-    public void tell(String S) {
-        DevBox.tell(S);    
-    }
+    public void tell(String S) {}
     
-    public void tell(int n, String S ) {}
+    public void tell(int n, String S ) {
+        //0:main,1:info,2:dev
+        switch ((int)(n/10)) {
+            case 2:
+                DevBox.tell(n, S);
+                break;
+            default:
+        }
+    }
     
     public static void main(String[] Args) {
         if (Instance == null)
@@ -129,9 +144,7 @@ public class Tetris_Sprint {
     private class MouseHandler extends MouseAdapter {
         private final WindowBox PARENT;
         
-        public MouseHandler(WindowBox Prnt) {
-           PARENT = Prnt;
-        }
+        public MouseHandler(WindowBox Prnt) { PARENT = Prnt; }
         
         @Override
         public void mouseClicked(MouseEvent ME) {
@@ -140,6 +153,26 @@ public class Tetris_Sprint {
     }
     
     private class KeyHandler extends KeyAdapter {
+        private final WindowBox PARENT;
+        private char lastKey, currentKey;
+        private boolean idle = true;
         
+        public KeyHandler(WindowBox Prnt) { PARENT = Prnt; }
+        
+        @Override
+        public void keyPressed(KeyEvent KE) {
+            lastKey = KE.getKeyChar();
+            currentKey = lastKey;
+            PARENT.tell(21, ""+lastKey);
+            PARENT.tell(22, ""+currentKey);
+            PARENT.Parent().GC.keyPressed(KE);
+        }
+        
+        @Override
+        public void keyReleased(KeyEvent KE) {
+            if (KE.getKeyChar() == currentKey)
+                PARENT.tell(22, "NONE");
+            PARENT.Parent().GC.keyReleased(KE);
+        }
     }
 }

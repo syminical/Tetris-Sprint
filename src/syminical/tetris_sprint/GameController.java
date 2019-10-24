@@ -1,5 +1,7 @@
 package syminical.tetris_sprint;
 
+import java.awt.event.KeyEvent;
+
 public class GameController {
     private final Tetris_Sprint PARENT;
     private GameModel GModel;
@@ -18,9 +20,9 @@ public class GameController {
         Model().newShape();
         Model().mode = 1;
         
-		View().repaint();
+		//View().repaint();
         
-        start();
+        gameLoop();
 	}
     
     private void payload() {
@@ -28,7 +30,7 @@ public class GameController {
         if (Model().frameReady) View().repaint();   
     }
     
-    private void start() {
+    private void gameLoop() {
         final double SEG_TIME = 1000 / 60; //60 frames per second.
         double start, segStart, segTotal, sleepTime;
         int segCount = 0;
@@ -60,6 +62,34 @@ public class GameController {
                 segCount = 0;
                 start = System.currentTimeMillis();   
             }
+        }
+    }
+    
+    public void keyPressed(KeyEvent KE) {
+        switch (KE.getKeyCode()) {
+            case KeyEvent.VK_RIGHT:
+                Model().right = true;
+                Model().directionTracker = 1;
+                Model().rDown = System.currentTimeMillis();
+                break;
+            case KeyEvent.VK_LEFT:
+                Model().left = true;
+                Model().directionTracker = -1;
+                Model().lDown = System.currentTimeMillis();
+                break;
+            case KeyEvent.VK_UP: break;
+            case KeyEvent.VK_DOWN: break;
+            case KeyEvent.VK_R: break;
+            case KeyEvent.VK_C: break;
+            default:
+        }
+    }
+    
+    public void keyReleased(KeyEvent KE) {
+        switch (KE.getKeyCode()) {
+            case KeyEvent.VK_RIGHT: Model().right = false; Model().directionTracker = ((Model().left)? -1 : 0); break;
+            case KeyEvent.VK_LEFT: Model().left = false; Model().directionTracker = ((Model().right)? 1 : 0); break;
+            default:
         }
     }
     

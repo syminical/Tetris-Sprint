@@ -11,10 +11,10 @@ public class GameModel {
 	public ArrayList<Movement> inputBuffer = new ArrayList<Movement>();
 	public int activeShape = -1, bottomTime = 0;
 	public int[][] grid = new int[25][10];
-	public boolean active = false, done = false, failed = false, force = false, swapped = false, first = false, right = false, left = false, down = false, frameReady = false;
+	public boolean active = false, done = false, failed = false, force = false, swapped = false, first = false, right = false, left = false, frameReady = false;
 	public ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
 	public double startTime, endTime, endTimeTime;
-	public double cstart, cend, cwstart, cwend, dtime, clock, rDown = 0, lDown = 0, dDown = 0;
+	public double cstart, cend, cwstart, cwend, dtime, clock, rDown = 0, lDown = 0;
 	public String endTimeS = "";
 	public int swapContainer = -1, fps = 0, directionTracker = 0;
 	public int rowsCleared = 0, rowsCap = 20, mode = 0;
@@ -217,8 +217,6 @@ public class GameModel {
 		else if (directionTracker == 1 && (System.currentTimeMillis() - rDown) > 200) inputBuffer.add(new Movement(1));
 
 		else if (directionTracker == -1 && (System.currentTimeMillis() - lDown) > 200) inputBuffer.add(new Movement(2));
-
-		else if (directionTracker == 2 && (System.currentTimeMillis() - dDown) > 200) inputBuffer.add(new Movement(0));
 
 	}
 
