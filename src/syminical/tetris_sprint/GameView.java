@@ -27,8 +27,9 @@ public class GameView extends JPanel {
     }*/
     
     //View methods
-    public void paint(Graphics g) {
-		super.paint(g);
+    @Override
+    public void paintComponent(Graphics g) {
+		super.paintComponent(g);
         
         switch (PARENT.Model().mode) {
             case 1:
