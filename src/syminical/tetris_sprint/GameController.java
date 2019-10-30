@@ -26,19 +26,22 @@ public class GameController {
 	}
     
     private void payload() {
+        Model().inputBuffer.
         Model().drawShapes();
-        if (Model().frameReady) View().repaint();   
+        Model().move();
+        
+        if (Model().frameReady) View().repaint();
     }
     
     private void gameLoop() {
-        final double SEG_TIME = 1000 / 60; //60 frames per second.
+        final double SEG_TIME = 100; //apparently the max at which users still feel instant response time
         double start, segStart, segTotal, sleepTime;
         int segCount = 0;
         
         start = System.currentTimeMillis();
         lastForceDrop = start;
         
-        while (true) { //tie to model running boolean
+        while (Model().active) {
             segStart = System.currentTimeMillis();
             payload();
             segTotal = System.currentTimeMillis() - segStart;
