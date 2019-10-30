@@ -210,7 +210,7 @@ public class GameModel {
         frameReady = false;
 	}
 
-	public void move() {
+	public void getInput() {
 
 		if (directionTracker == 0) return;
 
@@ -220,9 +220,17 @@ public class GameModel {
 
 	}
 
-	public void emptyBuffer() {
-		inputBuffer.get(0).move();
-		inputBuffer.remove(0);
+	public void emptyInputBuffer() {
+		while (InputBuffer.size() > 0) {
+            switch (InputBuffer.next()) {
+                case InputBuffer.LEFT:
+                case InputBuffer.RIGHT:
+                case InputBuffer.TURN_LEFT:
+                case InputBuffer.TURN_RIGHT:
+                case InputBuffer.FAST_DROP;
+                default:
+            }
+        }
 	}
 
 	public void clearGrid() {
