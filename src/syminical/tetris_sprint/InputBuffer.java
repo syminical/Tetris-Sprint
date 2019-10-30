@@ -1,7 +1,7 @@
 package syminical.tetris_sprint;
 
 public class InputBuffer {
-    private InputAction Head, Last;
+    private IBNode Head, Last;
     private int size = 0;
     public enum InputActionType { LEFT, RIGHT, TURN_LEFT, TURN_RIGHT, FAST_DROP }
     
@@ -9,18 +9,28 @@ public class InputBuffer {
         if (size == 0)
             Head(new IBNode(null, new InputAction(_)));
         else
-            if (Last.Data().Type() == _)
+            if (canMerge(_))
                 if (Last.Data().merge(_) == 0)
                     if (size != 1)
                         Last(Last.Prev());
                     else {
                         Head(null);
-                        size = -1;
+                        size = 0;
                     }   
             else {
                 Last = Last.Next(new IBNode(Last, new InputAction(_)));
+                ++size;
             }
-        ++size;
+    }
+    
+    public InputActionType next() {
+        if (size == 0) return null;
+        InputActionType _ = Head.Data().Type();
+        if (Head.Data().update(-1 * rawVal(Head.Data().Type())) == 0) {
+            Head = Head.Next();
+            --size;
+        }
+        return extract(_);
     }
     
     public void empty(long deadLine) {
@@ -33,7 +43,28 @@ public class InputBuffer {
         }
     }
     
-    private void Head(IBNode _) { Head = _; Last = Head; }
+    private InputActionType extract(IBNode _) {
+           
+    }
+    
+    private boolean canMerge(InputActionType _) {
+        switch (Last.Data().Type()) {
+            case LEFT:
+            case RIGHT:
+                if (_ == LEFT || _ == RIGHT) return true;
+                break;
+            case TURN_LEFT:
+            case TURN_RIGHT:
+                if (_ == TURN_LEFT || _ == TURN_RIGHT) return true;
+                break;
+            case FAST_DROP:
+                if (_ == FAST_DROP) return true;
+            default:
+        }
+        return false;
+    }
+    
+    private void Head(IBNode _) { Head = _; Last = Head; size = 1; }
     private void Last(IBNode _) { Last = _; Last.Next(null); --size; }
     public int rawVal(InputActionType _) { return ((_ == LEFT || _ == TURN_LEFT)? -1 : 1); }
     public int size() { return size; }
@@ -64,5 +95,6 @@ public class InputBuffer {
         }
         public InputActionType Type() { return Type; }
         public int magnitude() { return magnitude; }
+        public int update(int _) { magnitude += _; return magnitude; }
     }
 }
