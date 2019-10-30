@@ -21,44 +21,28 @@ public class Movement {
 		Sorcery.shapes.get(Sorcery.activeShape).clearShape(Sorcery.grid, 0);
 
 		switch(container) {
-
 			case 0:
-			
 				down();
-				
 				break;
-
 			case 1:
-	
 				Sorcery.shapes.get(Sorcery.activeShape).clearShape(Sorcery.grid, 1);
 				right();
 				Sorcery.shapes.get(Sorcery.activeShape).updateShadow();
-
 				break;
-
 			case 2:
-
 				Sorcery.shapes.get(Sorcery.activeShape).clearShape(Sorcery.grid, 1);
 				left();
 				Sorcery.shapes.get(Sorcery.activeShape).updateShadow();
-
 				break;
-
 			case 3:
-
 				fastDrop();
 				break;
-
 			case 4:
-
 				Sorcery.shapes.get(Sorcery.activeShape).clearShape(Sorcery.grid, 1);
 				turnRight();
 				Sorcery.shapes.get(Sorcery.activeShape).updateShadow();
-
 				break;
-
 			default:
-
 		}
 
 	}
