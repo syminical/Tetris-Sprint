@@ -26,9 +26,9 @@ public class GameController {
 	}
     
     private void payload() {
-        Model().inputBuffer.
+        Model().emptyInputBuffer();
         Model().drawShapes();
-        Model().move();
+        Model().getInput();
         
         if (Model().frameReady) View().repaint();
     }
