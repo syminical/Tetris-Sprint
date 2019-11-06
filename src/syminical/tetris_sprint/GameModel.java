@@ -220,6 +220,20 @@ public class GameModel {
 
 	}
 
+    public void rightPressed() {
+        InBuffer.add(InputActionType.RIGHT);
+        right = true;
+        directionTracker = 1;
+        rDown = System.currentTimeMillis();
+    }
+    
+    public void leftPressed() {
+        InBuffer.add(InputActionType.LEFT);
+        left = true;
+        directionTracker = -1;
+        lDown = System.currentTimeMillis();
+    }
+    
 	public void emptyInputBuffer() {
 		while (InBuffer.size() > 0) {
             switch (InBuffer.next()) {
