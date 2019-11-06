@@ -25,7 +25,8 @@ public class InputBuffer {
         InputActionType __ = Head.Data().Type();
         if (Head.Data().update(-1 * rawVal(Head.Data().Type())) == 0) {
             Head = Head.Next();
-            Head.Prev(null);
+            if (Head != null)
+                Head.Prev(null);
             --size;
         }
         return __;
