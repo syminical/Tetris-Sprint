@@ -8,8 +8,9 @@ import java.util.ArrayList;
 public class GameModel {
     private final GameController PARENT;
     public ArrayList<Shapes> shapes = new ArrayList<Shapes>();
-	public ArrayList<Movement> inputBuffer = new ArrayList<Movement>();
-	public int activeShape = -1, bottomTime = 0;
+	public InputBuffer InBuffer = new InputBuffer();
+	public int bottomTime = 0;
+    public Shapes activeShape;
 	public int[][] grid = new int[25][10];
 	public boolean active = false, done = false, failed = false, force = false, swapped = false, first = false, right = false, left = false, frameReady = false;
 	public ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
@@ -30,8 +31,7 @@ public class GameModel {
     
 	public void restart() {
 		shapes.clear();
-		inputBuffer.clear();
-		activeShape = -1;
+		InBuffer.clear();
 		clearGrid();
 		active = false;
 		first = false;
@@ -49,8 +49,7 @@ public class GameModel {
 
 	public void again() {
 		shapes.clear();
-		inputBuffer.clear();
-		activeShape = -1;
+		InBuffer.clear();
 		clearGrid();
 		first = false;
 		done = false;
@@ -71,14 +70,14 @@ public class GameModel {
     }
     
     public void drawShapes() {
-        shapes.get(activeShape).drawShape(grid, 0);
+        activeShape.drawShape(grid, 0);
         frameReady = true;
     }
     
 	private void checkRows() {
 		boolean checker;
         
-		for (int i = shapes.get(activeShape).getY() + shapes.get(activeShape).getHeight() - 1; i > shapes.get(activeShape).getY() - 1; i--) {
+		for (int i = activeShape.getY() + activeShape.getHeight() - 1; i > activeShape.getY() - 1; i--) {
 			checker = false;
 
 			for (int i2 = 0; i2 < grid[0].length; i2++)
@@ -104,7 +103,7 @@ public class GameModel {
 	}
 
 	private void deFrag() {
-		//shapes.get(activeShape).clearShape(grid, 1);
+		//activeShape.clearShape(grid, 1);
 		int holder = 0;
 		
 		while (clearBuffer.size() > 0) {
@@ -133,74 +132,75 @@ public class GameModel {
 
 		switch (container) {
 			case 0: 
-				shapes.add(new Square());
+				activeShape = new Square();
 				break;
 			case 1:
-				shapes.add(new Stick());
+				activeShape = new Stick();
 				break;
 			case 2:
-				shapes.add(new L1());
+				activeShape = new L1();
 				break;
 			case 3:
-				shapes.add(new L2());
+				activeShape = new L2();
 				break;
 			case 4:
-				shapes.add(new Tri());
+				activeShape = new Tri();
 				break;
 			case 5:
-				shapes.add(new Zig1());
+				activeShape = new Zig1();
 				break;
 			case 6:
-				shapes.add(new Zig2());
+				activeShape = new Zig2();
 				break;
 		}
-		activeShape++;
 	}
 
 	public void swap() {
 
 		if (swapContainer == -1) {
-			swapContainer = shapes.get(activeShape).getType();
-			shapes.get(activeShape).clearShape(grid, 0);
-			shapes.get(activeShape).clearShape(grid, 1);
+			swapContainer = activeShape.getType();
+			activeShape.clearShape(grid, 0);
+			activeShape.clearShape(grid, 1);
 			newShape();			
 		} else {
-			int temp = shapes.get(activeShape).getType();
+			int temp = activeShape.getType();
 
-			shapes.get(activeShape).clearShape(grid, 0);
-			shapes.get(activeShape).clearShape(grid, 1);
+			activeShape.clearShape(grid, 0);
+			activeShape.clearShape(grid, 1);
 
 			addShape(swapContainer);
 			swapContainer = temp;
 			swapped = true;
 		}
 
-		shapes.get(activeShape).fastDrop(1);
-		shapes.get(activeShape).drawShape(grid, 1);
+		//activeShape.fastDrop(1);
+		//activeShape.drawShape(grid, 1);
 	}
 
 	public void forceDrop() {
 
-		if (!shapes.get(activeShape).detectDown(grid, 0)) {
-			/*inputBuffer.add(0, new Movement(0));
+		if (!activeShape.detectDown(grid, 0)) {
+			/*InBuffer.add(0, new Movement(0));
 			emptyBuffer();*/
-            shapes.get(activeShape).clearShape(grid, 0);
-            shapes.get(activeShape).influenceY(1);
+            activeShape.clearShape(grid, 0);
+            activeShape.influenceY(1);
 		} else {
 			bottomTime++;
 
 			if (bottomTime >= 2) {
 
-				if (shapes.get(activeShape).getY() < 4) {
+				if (activeShape.getY() < 4) {
 					failed = true;
 					done = true;
 					endTimeTime = System.currentTimeMillis();
 					endTime = System.currentTimeMillis() - startTime;
 					//repaint();
 				} else {
-					shapes.get(activeShape).drawShape(grid, 0);
+					//activeShape.drawShape(grid, 0);
 					checkRows();
 					clearRows();
+                    activeShape.drawShape(grid, 0);
+                    //shapes.add(activeShape);  
 					newShape();
 					bottomTime = 0;
 					force = false;
@@ -209,30 +209,37 @@ public class GameModel {
 		}
         frameReady = false;
 	}
-
+    
 	public void getInput() {
 
 		if (directionTracker == 0) return;
 
-		else if (directionTracker == 1 && (System.currentTimeMillis() - rDown) > 200) inputBuffer.add(new Movement(1));
+		else if (directionTracker == 1 && (System.currentTimeMillis() - rDown) > 200) InBuffer.add(InputActionType.RIGHT);
 
-		else if (directionTracker == -1 && (System.currentTimeMillis() - lDown) > 200) inputBuffer.add(new Movement(2));
+		else if (directionTracker == -1 && (System.currentTimeMillis() - lDown) > 200) InBuffer.add(InputActionType.LEFT);
 
 	}
 
 	public void emptyInputBuffer() {
-		while (InputBuffer.size() > 0) {
-            switch (InputBuffer.next()) {
-                case InputBuffer.LEFT:
-                case InputBuffer.RIGHT:
-                case InputBuffer.TURN_LEFT:
-                case InputBuffer.TURN_RIGHT:
-                case InputBuffer.FAST_DROP;
+		while (InBuffer.size() > 0) {
+            switch (InBuffer.next()) {
+                case LEFT:
+                    if (activeShape.detectLeft(grid, 0))
+                        activeShape.influenceX(-1);
+                    break;
+                case RIGHT:
+                    if (activeShape.detectRight(grid, 0))
+                        activeShape.influenceX(1);
+                    break;
+                case TURN_LEFT:
+                case TURN_RIGHT:
+                case FAST_DROP:
                 default:
             }
+            activeShape.updateShadow();
         }
 	}
-
+    
 	public void clearGrid() {
 
 		for (int i = 0; i < grid.length; i++)
@@ -244,7 +251,7 @@ public class GameModel {
 	public void newShape() {
 		int container = (int)(Math.random() * 7);
 		addShape(container);	
-		shapes.get(activeShape).updateShadow();
+		activeShape.updateShadow();
 		swapped = false;
 	}
 
@@ -269,7 +276,7 @@ public class GameModel {
 		this.getActionMap().put("right", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (!right) { inputBuffer.add(new Movement(1)); rDown = System.currentTimeMillis(); }
+				if (!right) { InBuffer.add(new Movement(1)); rDown = System.currentTimeMillis(); }
 				right = true;
 				directionTracker = 1;
 			}
@@ -286,7 +293,7 @@ public class GameModel {
 		this.getActionMap().put("left", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (!left) { inputBuffer.add(new Movement(2)); lDown = System.currentTimeMillis(); }
+				if (!left) { InBuffer.add(new Movement(2)); lDown = System.currentTimeMillis(); }
 				left = true;
 				directionTracker = -1;
 			}
@@ -304,8 +311,8 @@ public class GameModel {
 			public void actionPerformed(ActionEvent e) {
 
 				if (active && !done) {
-					shapes.get(activeShape).clearShape(grid, 0);
-					inputBuffer.add(new Movement(4));
+					activeShape.clearShape(grid, 0);
+					InBuffer.add(new Movement(4));
 				}
 			}
 		});
@@ -313,8 +320,8 @@ public class GameModel {
 		this.getActionMap().put("down", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (!down) { inputBuffer.add(new Movement(0)); dDown = System.currentTimeMillis(); }
-				else if (shapes.get(activeShape).detectDown(grid, 0) && (System.currentTimeMillis() - rDown) > 1000) { directionTracker = 0; return; }
+				if (!down) { InBuffer.add(new Movement(0)); dDown = System.currentTimeMillis(); }
+				else if (activeShape.detectDown(grid, 0) && (System.currentTimeMillis() - rDown) > 1000) { directionTracker = 0; return; }
 				down = true;
 				directionTracker = 2;
 			}
@@ -331,7 +338,7 @@ public class GameModel {
 			public void actionPerformed(ActionEvent e) {
 
 				if (!active) begin();
-				else if (active && !done) inputBuffer.add(new Movement(3));
+				else if (active && !done) InBuffer.add(new Movement(3));
 				else if (done && ((int)(System.currentTimeMillis() - endTimeTime)) > 2000) again();
 			}
 		});
