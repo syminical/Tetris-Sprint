@@ -18,3 +18,4 @@ src/syminical/tetris_sprint/GameController.java
 src/syminical/tetris_sprint/GameModel.java
 src/syminical/tetris_sprint/GameView.java
 src/syminical/tetris_sprint/InputBuffer.java
+src/syminical/tetris_sprint/InputActionType.java
