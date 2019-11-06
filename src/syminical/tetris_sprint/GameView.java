@@ -34,7 +34,7 @@ public class GameView extends JPanel {
         switch (PARENT.Model().mode) {
             case 1:
                 drawGrid(g);
-				
+                drawActiveShape(g);
 				drawLines(g);
                 break;
             case 2:
@@ -103,6 +103,17 @@ public class GameView extends JPanel {
 			}
 		}
 	}
+    
+    private void drawActiveShape(Graphics g) {
+        Shapes Temp = PARENT.Model().activeShape;
+        int x = Temp.getX(), y = Temp.getY();
+        g.setColor(Shapes.colour(Temp.getType()));
+        
+        for (int i = 0; i < Temp.grid().length; ++i)
+            for (int j = 0; j < Temp.grid()[0].length; ++j)
+                if (Temp.grid()[i][j] != 0)
+                    g.fillRect((25 * (j + x)), (25 * (i + y - 4)), 25, 25);
+    }
 
 	private void drawFps(Graphics g) {
 		g.setColor(Color.WHITE);
