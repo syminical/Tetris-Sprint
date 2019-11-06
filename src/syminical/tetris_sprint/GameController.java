@@ -27,10 +27,11 @@ public class GameController {
     
     private void payload() {
         Model().emptyInputBuffer();
-        Model().drawShapes();
-        Model().getInput();
+        //Model().drawShapes();
         
-        if (Model().frameReady) View().repaint();
+        //if (Model().frameReady) 
+            View().repaint();
+        Model().getInput();
     }
     
     private void gameLoop() {
