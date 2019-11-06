@@ -3,70 +3,55 @@ package syminical.tetris_sprint;
 public class InputBuffer {
     private IBNode Head, Last;
     private int size = 0;
-    public enum InputActionType { LEFT, RIGHT, TURN_LEFT, TURN_RIGHT, FAST_DROP }
     
-    public void add(InputActionType _) {
+    public void add(InputActionType __) {
         if (size == 0)
-            Head(new IBNode(null, new InputAction(_)));
+            Head(new IBNode(null, new InputAction(__)));
         else
-            if (canMerge(_))
-                if (Last.Data().merge(_) == 0)
+            if (canMerge(__))
+                if (Last.Data().merge(__) == 0)
                     if (size != 1)
                         Last(Last.Prev());
-                    else {
-                        Head(null);
-                        size = 0;
-                    }   
+                    else 
+                        clear();
             else {
-                Last = Last.Next(new IBNode(Last, new InputAction(_)));
+                Last = Last.Next(new IBNode(Last, new InputAction(__)));
                 ++size;
             }
     }
     
     public InputActionType next() {
         if (size == 0) return null;
-        InputActionType _ = Head.Data().Type();
+        InputActionType __ = Head.Data().Type();
         if (Head.Data().update(-1 * rawVal(Head.Data().Type())) == 0) {
             Head = Head.Next();
+            Head.Prev(null);
             --size;
         }
-        return extract(_);
+        return __;
     }
     
-    public void empty(long deadLine) {
-        while (size > 0 && System.currentTimeMillis() < deadLine) {
-            switch (Head.Data().Type()) {
-                case LEFT:
-                    
-                case 
-            }
-        }
-    }
-    
-    private InputActionType extract(IBNode _) {
-           
-    }
-    
-    private boolean canMerge(InputActionType _) {
+    private boolean canMerge(InputActionType __) {
         switch (Last.Data().Type()) {
             case LEFT:
             case RIGHT:
-                if (_ == LEFT || _ == RIGHT) return true;
+                if (__ == InputActionType.LEFT || __ == InputActionType.RIGHT) return true;
                 break;
             case TURN_LEFT:
             case TURN_RIGHT:
-                if (_ == TURN_LEFT || _ == TURN_RIGHT) return true;
+                if (__ == InputActionType.TURN_LEFT || __ == InputActionType.TURN_RIGHT) return true;
                 break;
             case FAST_DROP:
-                if (_ == FAST_DROP) return true;
+                if (__ == InputActionType.FAST_DROP) return true;
             default:
         }
         return false;
     }
     
-    private void Head(IBNode _) { Head = _; Last = Head; size = 1; }
-    private void Last(IBNode _) { Last = _; Last.Next(null); --size; }
-    public int rawVal(InputActionType _) { return ((_ == LEFT || _ == TURN_LEFT)? -1 : 1); }
+    public void clear() { Head = null; Last = Head; size = 0; }
+    private void Head(IBNode __) { Head = __; Last = Head; size = 1; }
+    private void Last(IBNode __) { Last = __; Last.Next(null); --size; }
+    public static int rawVal(InputActionType __) { return ((__ == InputActionType.LEFT || __ == InputActionType.TURN_LEFT)? -1 : 1); }
     public int size() { return size; }
     
     //-----Helper Classes-----
@@ -75,7 +60,8 @@ public class InputBuffer {
         private InputAction Data;
         
         public IBNode(IBNode IBN, InputAction IA) { Prev = IBN; Data = IA; }
-        public IBNode Next(IBNode _) { Next = _; return Next; }
+        public IBNode Next(IBNode __) { Next = __; return Next; }
+        public void Prev(IBNode __) { Prev = __; }
         public IBNode Next() { return Next; }
         public IBNode Prev() { return Prev; }
         public InputAction Data() { return Data; }
@@ -85,16 +71,16 @@ public class InputBuffer {
         private InputActionType Type;
         private int magnitude;
         
-        public InputAction(InputActionType _) {
-            Type = _;
-            magnitude = InputBuffer.rawVal(_);
+        public InputAction(InputActionType __) {
+            Type = __;
+            magnitude = InputBuffer.rawVal(__);
         }
-        public int merge(InputActionType _) {
-            magnitude += InputBuffer.rawVal(_);
+        public int merge(InputActionType __) {
+            magnitude += InputBuffer.rawVal(__);
             return magnitude;
         }
         public InputActionType Type() { return Type; }
         public int magnitude() { return magnitude; }
-        public int update(int _) { magnitude += _; return magnitude; }
+        public int update(int __) { magnitude += __; return magnitude; }
     }
 }
