@@ -400,6 +400,8 @@ public class Shapes {
 		return height;
 
 	}
+    
+    public int[][] grid() { return grid; }
 
 }
 
