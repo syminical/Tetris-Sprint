@@ -72,14 +72,10 @@ public class GameController {
     public void keyPressed(KeyEvent KE) {
         switch (KE.getKeyCode()) {
             case KeyEvent.VK_RIGHT:
-                Model().right = true;
-                Model().directionTracker = 1;
-                Model().rDown = System.currentTimeMillis();
+                Model().rightPressed();
                 break;
             case KeyEvent.VK_LEFT:
-                Model().left = true;
-                Model().directionTracker = -1;
-                Model().lDown = System.currentTimeMillis();
+                Model().leftPressed();
                 break;
             case KeyEvent.VK_UP: break;
             case KeyEvent.VK_DOWN: break;
