@@ -24,7 +24,6 @@ public class GameController {
         
         gameLoop();
 	}
-    
     private void payload() {
         Model().emptyInputBuffer();
         //Model().drawShapes();
@@ -33,7 +32,6 @@ public class GameController {
             View().repaint();
         Model().getInput();
     }
-    
     private void gameLoop() {
         final double SEG_TIME = 100; //apparently the max at which users still feel instant response time
         double start, segStart, segTotal, sleepTime;
@@ -59,7 +57,6 @@ public class GameController {
             } catch (Exception E) { System.out.println("[sleep fail]"); }
             
             if (System.currentTimeMillis() - start >= 1000) {
-                
                 if (System.currentTimeMillis() - lastForceDrop >= 1000) Model().forceDrop();
                 Model().fps = segCount;
                 PARENT.tell(3);
@@ -71,31 +68,26 @@ public class GameController {
     
     public void keyPressed(KeyEvent KE) {
         switch (KE.getKeyCode()) {
-            case KeyEvent.VK_RIGHT:
-                Model().rightPressed();
-                break;
-            case KeyEvent.VK_LEFT:
-                Model().leftPressed();
-                break;
-            case KeyEvent.VK_UP: break;
-            case KeyEvent.VK_DOWN: break;
-            case KeyEvent.VK_R: break;
-            case KeyEvent.VK_C: break;
+            case KeyEvent.VK_RIGHT: Model().rightPressed(); break;
+            case KeyEvent.VK_LEFT: Model().leftPressed(); break;
+            case KeyEvent.VK_UP: Model().upPressed(); break;
+            case KeyEvent.VK_DOWN: Model().downPressed(); break;
             default:
-        }
+         }
     }
-    
     public void keyReleased(KeyEvent KE) {
         switch (KE.getKeyCode()) {
-            case KeyEvent.VK_RIGHT: Model().right = false; Model().directionTracker = ((Model().left)? -1 : 0); break;
-            case KeyEvent.VK_LEFT: Model().left = false; Model().directionTracker = ((Model().right)? 1 : 0); break;
+            case KeyEvent.VK_RIGHT: Model().rightReleased(); break;
+            case KeyEvent.VK_LEFT: Model().leftReleased(); break;
+            case KeyEvent.VK_UP: Model().upReleased(); break;
+            case KeyEvent.VK_DOWN: Model().downReleased(); break;
+            case KeyEvent.VK_R: Model().rReleased(); break;
+            case KeyEvent.VK_C: Model().cReleased(); break;
             default:
         }
     }
     
     public GameModel Model() { return GModel; }
-    
     public GameView View() { return GView; }
-    
     public Tetris_Sprint Parent() { return PARENT; }
 }
