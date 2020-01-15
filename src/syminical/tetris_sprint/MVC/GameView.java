@@ -33,7 +33,10 @@ public class GameView extends JPanel {
         
         switch (PARENT.Model().mode) {
             case 1:
-                drawGrid(g);
+                if (PARENT.Model().dirtyGrid) {
+                    clear(g);
+                    drawGrid(g);
+                }
                 drawActiveShape(g);
 				drawLines(g);
                 break;
@@ -49,13 +52,16 @@ public class GameView extends JPanel {
 		drawFps(g);
 	}
     
+    private void clear(Graphics g) {
+        g.setColor(Block.colour(BlockType.BLANK));
+        g.fillRect(0, 0, 25 * PARENT.Model().BlockGrid.WIDTH(), 25 * PARENT.Model().BlockGrid.HEIGHT());
+    }
     private void drawEnd(Graphics g) {
 		drawGrid(g);
 		drawLines(g);
 		drawTime(g);
 		drawButton(g);
 	}
-
 	private void drawWindow(Graphics g) {
 		g.setColor(new Color(200, 200, 200));
 		g.fillRoundRect( 17, 51, 224, 114, 20, 20);
@@ -64,7 +70,6 @@ public class GameView extends JPanel {
 		g.setColor(new Color(150, 150, 150));
 		g.drawRoundRect( 21, 57, 214, 100, 20, 20);
 	}
-
 	private void drawTime(Graphics g) {
 		drawWindow(g);
 		PARENT.Model().endTimeS = "" + ((((int)(PARENT.Model().endTime / 1000)) >= 60 ) ? ("" + ((int)(PARENT.Model().endTime / 1000 / 60)) + " m ") : "") + ((((int)(PARENT.Model().endTime / 1000)) % 60 > 0) ? ((((int)(PARENT.Model().endTime / 1000)) % 60) + " s") : ((((int)(PARENT.Model().endTime / 1000)) >= 60) ? "" : "0 s"));
@@ -77,7 +82,6 @@ public class GameView extends JPanel {
 		}
 		g.setFont(buttonFont);
 	}
-
 	private void drawButton(Graphics g) {
 		g.setColor(new Color(200, 200, 200));
 		g.fillRoundRect( (47), (222), (155), (57), 40, 40 );
@@ -89,31 +93,40 @@ public class GameView extends JPanel {
 		g.setFont(buttonFont);
 		g.drawString("Click Me", (25 * 3 - 16), (261)); 
     }
-
 	private void drawGrid(Graphics g) {
         for (int i = 0; i < 20; i++)
 			for (int i2 = 0; i2 < PARENT.Model().BlockGrid.data()[0].length; i2++)
 				if (PARENT.Model().grid[i + 4][i2] != BlockType.BLANK) {
-					g.setColor(Shapes.colour(PARENT.Model().grid[i + 4][i2]));
+					g.setColor(Block.colour(PARENT.Model().grid[i + 4][i2]));
 					g.fillRect( (25 * i2), (25 * i), 25, 25);
 				}
     }
-    
-    private void drawActiveShape(Graphics g) {
-        Shapes AS = PARENT.Model().activeShape; s = AS.state();
-        g.setColor(Block.colour(AS.type()));
+    private void clearActiveBlock(Graphics g) {
+        Block AB = PARENT.Model().ActiveBlock; s = AB.state();
+        g.setColor(Block.colour(BlockType.BLANK));
         
-        for (int i = 0; i < AS.height(); ++i)
-            for (int j = 0; j < AS.width(); ++j)
-                if (AS.grid[AS.state()][i][j])
-                    g.fillRect((25 & (j + x)), (25 * (i + y - 4)), 25, 25);
+        for (int i = 0; i < AB.height(); ++i)
+            for (int j = 0; j < AB.width(); ++j)
+                if (AB.data()[AB.state()][i][j]) {
+                    g.fillRect(25 * (j + AB.x()), 25 * (i + AB.y() - 4), 25, 25);
+                    g.fillRect(25 * (j + AB.x()), 25 * (i + AB.shadowY() - 4), 25, 25);
+                }
     }
-
+    private void clearActiveBlock() { clearActiveBlock(g); }
+    private void drawActiveShape(Graphics g) {
+        Block AB = PARENT.Model().ActiveBlock;
+        g.setColor(Block.colour(AB.type()));
+        clearActiveShape(g);
+        
+        for (int i = 0; i < AB.height(); ++i)
+            for (int j = 0; j < AB.width(); ++j)
+                if (AB.data()[AS.state()][i][j])
+                    g.fillRect((25 * (j + x)), (25 * (i + y - 4)), 25, 25);
+    }
 	private void drawFps(Graphics g) {
 		g.setColor(Color.WHITE);
 		g.drawString("fps: [" + PARENT.Model().fps + "]", 5, 15);
 	}
-
 	private void drawLines(Graphics g) {
 		g.setColor(Color.BLACK);
 
