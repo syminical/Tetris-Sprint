@@ -5,9 +5,9 @@ import java.awt.Color;
 
 public abstract class Block {
 
-	protected int height, width, x, y, sy, state = 0, endState = 0;
+	protected int height, width, x, y, shadowY, state = 0, endState = 0;
     protected BlockType type;
-	protected canTurn = false;
+	protected boolean canTurn = false;
 	protected boolean[][][] grid;//state, y, x
     protected Color BlockColour;
     /*protected boolean saved = false;
@@ -15,7 +15,7 @@ public abstract class Block {
 
 	public Block() { initBlock(); }
     
-    //must init: grid, type, BlockColour
+    //must init: grid, type
     private abstract void initBlock();
     
     //public API
@@ -56,7 +56,7 @@ public abstract class Block {
 		updateShadow(y);
 	}
 	public void turnLeft() {
-		if (!canTurn) reutrn;
+		if (!canTurn) return;
         
         if (state == 0) state = endState;
         else --state;
@@ -127,10 +127,11 @@ public abstract class Block {
 		}
 	}
 	public int getType() { return type; }
-	public int getX() { return x; }
-	public int getY() { return y; }
+	public int x() { return x; }
+	public int y() { return y; }
+    public int shadowY() { return shadowY; }
 	public int height() { return height; }
     public int width() { Return width; }
     public boolean[][][] data() { return grid; }
-    public String toString() { return "x: [" + x + "] | y: [" + y + "] | sy: [" + sy + "] | height: [" + height + "] | width: [" + width + "]"; }
+    public String toString() { return "x: [" + x + "] | y: [" + y + "] | shadowY: [" + shadowY + "] | height: [" + height + "] | width: [" + width + "]"; }
 }
