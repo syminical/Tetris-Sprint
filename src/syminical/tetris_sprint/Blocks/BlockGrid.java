@@ -1,11 +1,16 @@
 package syminical.tetris_sprint;
 
 public class BlockGrid {
+    private final GameModel PARENT;
     private final int HIDDEN_HEIGHT = 5;
     private final int HEIGHT = 20;
     private final int WIDTH = 10;
+    private int rowsCleared = 0;
+    private ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
     private BlockType[][] grid = new int[HEIGHT + HIDDEN_HEIGHT][WIDTH];
     private BlockType[] peaks = new int[WIDTH];
+    
+    public BlockGrid(GameModel __) { PARENT = __; }
     
     public void addBlock(Block __) {
         for (int i = __.height(); i < __.height; ++i)
@@ -79,8 +84,48 @@ public class BlockGrid {
         return success;
     }
     
+    private void deFrag() {
+		//ActiveBlock.clearShape(grid, 1);
+		int precision = 0;
+		
+		while (clearBuffer.size() > 0) {
+			for (int i = clearBuffer.get(0) + precision; i > 3; i--)
+				for (int i2 = 0; i2 < WIDTH; ++i2)
+					grid[i] = grid[i - 1];
+
+			for (int i = 0; i < WIDTH; ++i)
+				Arrays.fill(grid[4], BlockType.BLANK);
+
+			++precision;
+			clearBuffer.remove(0);
+		}
+
+		if (rowsCleared >= rowsCap) PARENT.goalReached();
+	}
+    
+    private void clearRows() {
+		for (Integer container : clearBuffer) {
+			Arrays.fill(grid[container], BlockType.BLANK);            
+			++rowsCleared;
+		}
+		deFrag();
+	}
+    private void checkRows(Block __) {
+		boolean full;
+        
+		for (int i = __.y() + __.height() - 1; i > __.y() - 1; --i) {
+			full = true;
+			for (int i2 = 0; i2 < WIDTH; ++j)
+				if (grid[i][i2] == BlockType.BLANK)
+					full = false;
+			if (full) clearBuffer.add(i);
+		}
+	}
+    
     public int HIDDEN_HEIGHT() { return HIDDEN_HEIGHT; }
     public int HEIGHT() { return HEIGHT; }
     public int WIDTH() { return WIDTH; }
+    public int rowsCleared() { return rowsCleared; }
     public BlockType[][] data() { return grid; }
+    public void clear() { grid = new int[HEIGHT + HIDDEN_HEIGHT][WIDTH]; }
 }
