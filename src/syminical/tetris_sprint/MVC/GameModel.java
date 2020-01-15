@@ -7,28 +7,25 @@ import java.util.ArrayList;
 
 public class GameModel {
     private final GameController PARENT;
-    public ArrayList<Shapes> shapes = new ArrayList<Shapes>();
 	public InputBuffer InBuffer = new InputBuffer();
 	public int bottomTime = 0;
-    public Shapes activeShape;
+    public Block ActiveBlock, SwapBlock;
     public BlockGrid Grid = new BlockGrid();
-	public boolean active = false, done = false, failed = false, force = false, swapped = false, first = false, right = false, left = false, frameReady = false;
-	public ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
+	public boolean active = false, done = false, failed = false, force = false, swapped = false, first = false, right = false, left = false, up = false, down = false, frameReady = false;
 	public double startTime, endTime, endTimeTime;
-	public double cstart, cend, cwstart, cwend, dtime, clock, rDown = 0, lDown = 0;
+	public double cstart, cend, cwstart, cwend, dtime, clock, rightDown = 0, leftDown = 0, upDown = 0, downDown = 0;
 	public String endTimeS = "";
-	public int swapContainer = -1, fps = 0, directionTracker = 0;
-	public int rowsCleared = 0, rowsCap = 20, mode = 0;
-    
+	public int fps = 0, directionTracker = 0;
+	public int rowsCap = 20, mode = 0;
+
     public GameModel(GameController GM) { PARENT = GM; }
-    
+
     public void begin() {
         active = true;
         clearGrid();
         newShape();
         mode = 1;
     }
-    
 	public void restart() {
 		shapes.clear();
 		InBuffer.clear();
@@ -46,7 +43,6 @@ public class GameModel {
 		bottomTime = 0;
 		startTime = System.currentTimeMillis();
 	}
-
 	public void again() {
 		shapes.clear();
 		InBuffer.clear();
@@ -64,210 +60,156 @@ public class GameModel {
 		bottomTime = 0;
 		startTime = System.currentTimeMillis();
 	}
-
     public void end() {
         fps = 0;   
     }
-    
-    public void drawShapes() {
-        activeShape.drawShape(grid, 0);
-        frameReady = true;
+    public void goalReached() {
+        done = true;
+        active = false;
+        mode = 2;
+        endTimeTime = System.currentTimeMillis();
+        endTime = System.currentTimeMillis() - startTime;
+        //repaint();
     }
     
-	private void checkRows() {
-		boolean checker;
-        
-		for (int i = activeShape.getY() + activeShape.getHeight() - 1; i > activeShape.getY() - 1; i--) {
-			checker = false;
+    public void drawActiveBlock() {
+        ActiveBlock.drawShape(grid, 0);
+        frameReady = true;
+    }
 
-			for (int i2 = 0; i2 < grid[0].length; i2++)
-
-				if (grid[i][i2] == 7)
-					checker = true;
-
-			if (!checker)
-				clearBuffer.add(i);
-		}
+    public void emptyInputBuffer() {
+		while (InBuffer.size() > 0) {
+            PARENT.View().clearActiveBlock();
+            switch (InBuffer.next()) {
+                case LEFT:
+                    if (!BlockGrid.detectLeft(ActiveBlock))
+                        ActiveBlock.influenceX(-1);
+                    break;
+                case RIGHT:
+                    if (!BlockGrid.detectRight(ActiveBlock))
+                        ActiveBlock.influenceX(1);
+                    break;
+                case TURN_LEFT:
+                    BlockGrid.tryLeftTurn(ActiveBlock);
+                    break;
+                case TURN_RIGHT:
+                    BlockGrid.tryRightTurn(ActiveBlock);
+                    break;
+                case FAST_DROP:
+                    ActiveBlock.move(BlockGrid.fastDrop(ActiveBlock));
+                    commitBlock();
+                    newBlock();
+                default:
+            }
+        }
 	}
-
-	private void clearRows() {
-
-		for (Integer container : clearBuffer) {
-
-			for (int i = 0; i < grid[container].length; i++)
-				grid[container][i] = 7;
-            
-			rowsCleared++;
-		}
-		deFrag();
+	public void clearGrid() {
+        BlockGrid.clear();
 	}
-
-	private void deFrag() {
-		//activeShape.clearShape(grid, 1);
-		int holder = 0;
-		
-		while (clearBuffer.size() > 0) {
-
-			for (int i = clearBuffer.get(0) + holder; i > 3; i--)
-
-				for (int i2 = 0; i2 < grid[0].length; i2++)
-					grid[i][i2] = grid[i - 1][i2];
-
-			for (int i = 0; i < grid[0].length; i++)
-				grid[4][i] = 7;
-
-			holder++;
-			clearBuffer.remove(0);
-		}
-
-		if (rowsCleared >= rowsCap) {
-			done = true;
-			endTimeTime = System.currentTimeMillis();
-			endTime = System.currentTimeMillis() - startTime;
-			//repaint();
-		}
-	}
-
-	private void addShape(int container) {
-
-		switch (container) {
-			case 0: 
-				activeShape = new Square();
-				break;
-			case 1:
-				activeShape = new Stick();
-				break;
-			case 2:
-				activeShape = new L1();
-				break;
-			case 3:
-				activeShape = new L2();
-				break;
-			case 4:
-				activeShape = new Tri();
-				break;
-			case 5:
-				activeShape = new Zig1();
-				break;
-			case 6:
-				activeShape = new Zig2();
-				break;
-		}
-	}
-
 	public void swap() {
-
-		if (swapContainer == -1) {
-			swapContainer = activeShape.getType();
-			activeShape.clearShape(grid, 0);
-			activeShape.clearShape(grid, 1);
+		if (SwapBlock == null) {
+			SwapBlock = ActiveBlock.type();
+			PARENT.View().clearActiveBlock();
 			newShape();			
 		} else {
-			int temp = activeShape.getType();
-
-			activeShape.clearShape(grid, 0);
-			activeShape.clearShape(grid, 1);
-
-			addShape(swapContainer);
-			swapContainer = temp;
-			swapped = true;
+			BlockType __ = ActiveBlock.getType();
+            PARENT.View().clearActiveBlock();
+			ActiveBlock = SwapBlock;
+			SwapBlock = __;
 		}
-
-		//activeShape.fastDrop(1);
-		//activeShape.drawShape(grid, 1);
+        swapped = true;
 	}
-
 	public void forceDrop() {
-
-		if (!activeShape.detectDown(grid, 0)) {
-			/*InBuffer.add(0, new Movement(0));
-			emptyBuffer();*/
-            activeShape.clearShape(grid, 0);
-            activeShape.influenceY(1);
-		} else {
-			bottomTime++;
-
-			if (bottomTime >= 2) {
-
-				if (activeShape.getY() < 4) {
-					failed = true;
-					done = true;
-					endTimeTime = System.currentTimeMillis();
-					endTime = System.currentTimeMillis() - startTime;
-					//repaint();
-				} else {
-					//activeShape.drawShape(grid, 0);
-					checkRows();
-					clearRows();
-                    activeShape.drawShape(grid, 0);
-                    //shapes.add(activeShape);  
-					newShape();
-					bottomTime = 0;
-					force = false;
-				}
-			}
-		}
+        if (BlockGrid.detectDown(ActiveBlock)) {
+            bottomTime++;
+            
+            if (bottomTime >= 3)
+                if (ActiveBlock.y() < 4) {
+                    endTimeTime = System.currentTimeMillis();
+                    failed = true;
+                    done = true;
+                    endTime = endTimeTime - startTime;
+                } else {
+                    checkRows();
+                    clearRows();
+                    newShape();
+                    bottomTime = 0;
+                    force = false;
+                }
+        } else {
+            PARENT.VIEW().clearActiveBlock();
+            ActiveBlock.influenceY(1);
+        }
         frameReady = false;
 	}
-    
-	public void getInput() {
-
-		if (directionTracker == 0) return;
-
-		else if (directionTracker == 1 && (System.currentTimeMillis() - rDown) > 200) InBuffer.add(InputActionType.RIGHT);
-
-		else if (directionTracker == -1 && (System.currentTimeMillis() - lDown) > 200) InBuffer.add(InputActionType.LEFT);
-
+    public void newBlock() {
+		Block __;
+        swapped = false;
+        
+        switch ((int)(Math.random() * 7)) {
+            case 0: __ = new Square(); break;
+            case 1: __ = new L1(); break;
+            case 2: __ = new L2(); break;
+            case 3: __ = new Zig1(); break;
+            case 4: __ = new Zig2(); break;
+            case 5: __ = new Tri(); break;
+            case 6: __ = new Stick(); break;
+            default:
+        }
+        
+		if (ActiveBlock != null) { BlockGrid.add(ActiveBlock); BlockGrid.checkRows(ActiveBlock); } 
+        ActiveBlock = __;
 	}
 
+	public void getInput() {
+		if (directionTracker == 0) return;
+		else if (directionTracker == 1 && (System.currentTimeMillis() - rightDown) > 200) InBuffer.add(InputActionType.RIGHT);
+		else if (directionTracker == -1 && (System.currentTimeMillis() - leftDown) > 200) InBuffer.add(InputActionType.LEFT);
+        else if (directionTracker == 2 && (System.currentTimeMillis() - upDown) > 200) InBuffer.add(InputActionType.TURN_RIGHT);
+        else if (directionTracker == -2 && (System.currentTimeMillis() - downDown) > 200) InBuffer.add(InputActionType.TURN_LEFT);
+	}
     public void rightPressed() {
         InBuffer.add(InputActionType.RIGHT);
         right = true;
         directionTracker = 1;
-        rDown = System.currentTimeMillis();
+        rightDown = System.currentTimeMillis();
     }
-    
+    public void rightReleased() {
+        right = false;
+        directionTracker = ((left)? -1 : ((up)? 2 : ((down)? -2 : 0)));
+    }
     public void leftPressed() {
         InBuffer.add(InputActionType.LEFT);
         left = true;
         directionTracker = -1;
-        lDown = System.currentTimeMillis();
+        leftDown = System.currentTimeMillis();
     }
-    
-	public void emptyInputBuffer() {
-		while (InBuffer.size() > 0) {
-            switch (InBuffer.next()) {
-                case LEFT:
-                    if (activeShape.detectLeft(grid, 0))
-                        activeShape.influenceX(-1);
-                    break;
-                case RIGHT:
-                    if (activeShape.detectRight(grid, 0))
-                        activeShape.influenceX(1);
-                    break;
-                case TURN_LEFT:
-                case TURN_RIGHT:
-                case FAST_DROP:
-                default:
-            }
-            activeShape.updateShadow();
-        }
-	}
-    
-	public void clearGrid() {
-
-		for (int i = 0; i < grid.length; i++)
-		
-			for (int i2 = 0; i2 < grid[0].length; i2++)
-				grid[i][i2] = 7;
-	}
-
-	public void newShape() {
-		int container = (int)(Math.random() * 7);
-		addShape(container);	
-		activeShape.updateShadow();
-		swapped = false;
-	}
+    public void leftReleased() {
+        left = false;
+        directionTracker = ((right)? -1 : ((up)? 2 : ((down)? -2 : 0)));
+    }
+    public void upPressed() {
+        InBuffer.add(InputActionType.TURN_LEFT);
+        up = true;
+        directionTracker = 2;
+        upDown = System.currentTimeMillis();
+    }
+    public void upReleased() {
+        up = false;
+        directionTracker = ((down)? -1 : ((right)? 2 : ((left)? -2 : 0)));
+    }
+    public void downPressed() {
+        InBuffer.add(InputActionType.TURN_LEFT);
+        down = true;
+        directionTracker = -2;
+        downDown = System.currentTimeMillis();
+    }
+    public void downReleased() {
+        down = false;
+        directionTracker = ((up)? -1 : ((right)? 2 : ((left)? -2 : 0)));
+    }
+    public void rReleased() { restart(); }
+    public void cReleased() { swap(); }
 
 	/*private void listeners() {
 		this.addMouseListener(new MouseAdapter() {
