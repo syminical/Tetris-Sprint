@@ -1,5 +1,9 @@
 package syminical.tetris_sprint;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.awt.Point;
+
 public class BlockGrid {
     private final GameModel PARENT;
     private final int HIDDEN_HEIGHT = 5;
@@ -7,21 +11,21 @@ public class BlockGrid {
     private final int WIDTH = 10;
     private int rowsCleared = 0;
     private ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
-    private BlockType[][] grid = new int[HEIGHT + HIDDEN_HEIGHT][WIDTH];
-    private BlockType[] peaks = new int[WIDTH];
+    private BlockType[][] grid = new BlockType[HEIGHT + HIDDEN_HEIGHT][WIDTH];
+    private int[] peaks = new int[WIDTH];
     
     public BlockGrid(GameModel __) { PARENT = __; }
     
     public void addBlock(Block __) {
         for (int i = __.height(); i < __.height; ++i)
             for (int j = __.width(); j < __.width; ++j)
-                if (__.data()[i][j]) {
+                if (__.data()[__.state()][i][j]) {
                     if (peaks[j] > i) peaks[j] = i;                    
                     grid[i][j] = __.type();
                 }
     }
     
-    public point fastDrop(Block B) {
+    public Point fastDrop(Block B) {
         int answer = HEIGHT;
         
         for (int i = 0; i < B.width(); ++i)
@@ -36,7 +40,7 @@ public class BlockGrid {
         
         for (int i = B.height()-1; i > -1; --i)
             for (int j = 0; j < B.width(); ++j)
-                if (B.data()[i][j])
+                if (B.data()[B.state][i][j])
                     if (grid[B.y()+i+1][B.x()+j] != BlockType.BLANK)
                         return true;
 	}
@@ -45,7 +49,7 @@ public class BlockGrid {
         
         for (int i = B.height()-1; i > -1; --i)
             for (int j = 0; j < B.width(); ++j)
-                if (B.data()[i][j])
+                if (B.data()[B.state()][i][j])
                     if (grid[B.y()+i][B.x()+j-1] != BlockType.BLANK)
                         return true;
 	}
@@ -54,7 +58,7 @@ public class BlockGrid {
         
         for (int i = B.height()-1; i > -1; --i)
             for (int j = 0; j < B.width(); ++j)
-                if (B.data()[i][j])
+                if (B.data()[B.state()][i][j])
                     if (grid[B.y()+i][B.x()+j+1] != BlockType.BLANK)
                         return true;
     }
@@ -65,7 +69,7 @@ public class BlockGrid {
         
         for (int i = B.height()-1; i > -1; --i)
             for (int j = 0; j < B.width(); ++j)
-                if (B.data()[i][j])
+                if (B.data()[B.state()][i][j])
                     if(grid[B.y()+i][B.x()+j] != BlockType.BLANK) {
                         success = false; break; }
         if (!success) B.turnRight();
@@ -77,7 +81,7 @@ public class BlockGrid {
         
         for (int i = B.height(); i > -1; --i)
             for (int j = B.width()-1; j > -1; --j)
-                if (B.data()[i][j])
+                if (B.data()[B.state()][i][j])
                     if(grid[B.y()+i][B.x()+j] != BlockType.BLANK) {
                         success = false; break; }
         if (!success) B.turnLeft();
@@ -100,7 +104,7 @@ public class BlockGrid {
 			clearBuffer.remove(0);
 		}
 
-		if (rowsCleared >= rowsCap) PARENT.goalReached();
+		if (rowsCleared >= PARENT.rowsCap) PARENT.goalReached();
 	}
     
     private void clearRows() {
@@ -115,7 +119,7 @@ public class BlockGrid {
         
 		for (int i = __.y() + __.height() - 1; i > __.y() - 1; --i) {
 			full = true;
-			for (int i2 = 0; i2 < WIDTH; ++j)
+			for (int j = 0; j < WIDTH; ++j)
 				if (grid[i][i2] == BlockType.BLANK)
 					full = false;
 			if (full) clearBuffer.add(i);
@@ -127,5 +131,6 @@ public class BlockGrid {
     public int WIDTH() { return WIDTH; }
     public int rowsCleared() { return rowsCleared; }
     public BlockType[][] data() { return grid; }
-    public void clear() { grid = new int[HEIGHT + HIDDEN_HEIGHT][WIDTH]; }
+    public void clear() { grid = new int[HEIGHT + HIDDEN_HEIGHT][WIDTH]; clearBuffer.clear(); }
+    public void reset() { clear(); clearBuffer.clear(); rowsCleared = 0; }
 }

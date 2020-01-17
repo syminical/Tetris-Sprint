@@ -9,8 +9,9 @@ public class GameModel {
     private final GameController PARENT;
 	public InputBuffer InBuffer = new InputBuffer();
 	public int bottomTime = 0;
-    public Block ActiveBlock, SwapBlock;
-    public BlockGrid Grid = new BlockGrid();
+    public Block ActiveBlock;
+    public BlockType SwapBlock;
+    public BlockGrid Grid;
 	public boolean active = false, done = false, failed = false, force = false, swapped = false, first = false, right = false, left = false, up = false, down = false, frameReady = false;
 	public double startTime, endTime, endTimeTime;
 	public double cstart, cend, cwstart, cwend, dtime, clock, rightDown = 0, leftDown = 0, upDown = 0, downDown = 0;
@@ -18,44 +19,39 @@ public class GameModel {
 	public int fps = 0, directionTracker = 0;
 	public int rowsCap = 20, mode = 0;
 
-    public GameModel(GameController GM) { PARENT = GM; }
+    public GameModel(GameController GM) { PARENT = GM; Grid = new BlockGrid(this); }
 
     public void begin() {
         active = true;
         clearGrid();
-        newShape();
+        newBlock();
         mode = 1;
     }
 	public void restart() {
-		shapes.clear();
+		Grid.reset();
 		InBuffer.clear();
 		clearGrid();
 		active = false;
 		first = false;
 		done = false;
 		failed = false;
-		clearBuffer.clear();
 		endTimeS = "";
 		swapped = false;
-		swapContainer = -1;
-		rowsCleared = 0;
-		newShape();
+		swapBlock = null;
+		newBlock();
 		bottomTime = 0;
 		startTime = System.currentTimeMillis();
 	}
 	public void again() {
-		shapes.clear();
 		InBuffer.clear();
-		clearGrid();
+		Grid.reset();
 		first = false;
 		done = false;
 		failed = false;
-		clearBuffer.clear();
 		endTimeS = "";
 		swapped = false;
-		swapContainer = -1;
-		rowsCleared = 0;
-		newShape();
+		swapBlock = null;
+		newBlock();
 		active = true;
 		bottomTime = 0;
 		startTime = System.currentTimeMillis();
@@ -72,10 +68,10 @@ public class GameModel {
         //repaint();
     }
     
-    public void drawActiveBlock() {
+    /*public void drawActiveBlock() {
         ActiveBlock.drawShape(grid, 0);
         frameReady = true;
-    }
+    }*/
 
     public void emptyInputBuffer() {
 		while (InBuffer.size() > 0) {
@@ -97,7 +93,7 @@ public class GameModel {
                     break;
                 case FAST_DROP:
                     ActiveBlock.move(BlockGrid.fastDrop(ActiveBlock));
-                    commitBlock();
+                    BlockGrid.addBlock(ActiveBlock);
                     newBlock();
                 default:
             }

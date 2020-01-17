@@ -1,0 +1,441 @@
+src\syminical\tetris_sprint\Blocks\Stick.java:3: error: class STICK is public, should be declared in a file named STICK.java
+public class STICK extends Block {
+       ^
+src\syminical\tetris_sprint\Blocks\Block.java:100: error: incompatible types: possible lossy conversion from double to int
+    public void setBlock(Point __) { x = __.getX(); y = __.getY(); }
+                                                ^
+src\syminical\tetris_sprint\Blocks\Block.java:100: error: incompatible types: possible lossy conversion from double to int
+    public void setBlock(Point __) { x = __.getX(); y = __.getY(); }
+                                                               ^
+src\syminical\tetris_sprint\Blocks\Block.java:123: error: an enum switch case label must be the unqualified name of an enumeration constant
+			case 8:
+			     ^
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:13: error: incompatible types: int[][] cannot be converted to BlockType[][]
+    private BlockType[][] grid = new int[HEIGHT + HIDDEN_HEIGHT][WIDTH];
+                                 ^
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:14: error: incompatible types: int[] cannot be converted to BlockType[]
+    private BlockType[] peaks = new int[WIDTH];
+                                ^
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:21: error: cannot find symbol
+                if (__.data()[__.state()][i][j]) {
+                                ^
+  symbol:   method state()
+  location: variable __ of type Block
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:22: error: bad operand types for binary operator '>'
+                    if (peaks[j] > i) peaks[j] = i;                    
+                                 ^
+  first type:  BlockType
+  second type: int
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:22: error: incompatible types: int cannot be converted to BlockType
+                    if (peaks[j] > i) peaks[j] = i;                    
+                                                 ^
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:31: error: bad operand types for binary operator '<'
+            if (peaks[B.x()+i] < answer)
+                               ^
+  first type:  BlockType
+  second type: int
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:32: error: incompatible types: BlockType cannot be converted to int
+                answer = peaks[B.x()+i];
+                              ^
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:51: error: incompatible types: boolean[] cannot be converted to boolean
+                if (B.data()[i][j])
+                               ^
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:60: error: incompatible types: boolean[] cannot be converted to boolean
+                if (B.data()[i][j])
+                               ^
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:71: error: incompatible types: boolean[] cannot be converted to boolean
+                if (B.data()[i][j])
+                               ^
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:83: error: incompatible types: boolean[] cannot be converted to boolean
+                if (B.data()[i][j])
+                               ^
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:100: error: cannot find symbol
+				Arrays.fill(grid[4], BlockType.BLANK);
+				^
+  symbol:   variable Arrays
+  location: class BlockGrid
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:106: error: cannot find symbol
+		if (rowsCleared >= rowsCap) PARENT.goalReached();
+		                   ^
+  symbol:   variable rowsCap
+  location: class BlockGrid
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:111: error: cannot find symbol
+			Arrays.fill(grid[container], BlockType.BLANK);            
+			^
+  symbol:   variable Arrays
+  location: class BlockGrid
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:121: error: cannot find symbol
+			for (int i2 = 0; i2 < WIDTH; ++j)
+			                               ^
+  symbol:   variable j
+  location: class BlockGrid
+src\syminical\tetris_sprint\Blocks\BlockGrid.java:133: error: incompatible types: int[][] cannot be converted to BlockType[][]
+    public void clear() { grid = new int[HEIGHT + HIDDEN_HEIGHT][WIDTH]; }
+                                 ^
+src\syminical\tetris_sprint\MVC\GameModel.java:13: error: constructor BlockGrid in class BlockGrid cannot be applied to given types;
+    public BlockGrid Grid = new BlockGrid();
+                            ^
+  required: GameModel
+  found: no arguments
+  reason: actual and formal argument lists differ in length
+src\syminical\tetris_sprint\MVC\GameModel.java:26: error: cannot find symbol
+        newShape();
+        ^
+  symbol:   method newShape()
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:30: error: cannot find symbol
+		shapes.clear();
+		^
+  symbol:   variable shapes
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:37: error: cannot find symbol
+		clearBuffer.clear();
+		^
+  symbol:   variable clearBuffer
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:40: error: cannot find symbol
+		swapContainer = -1;
+		^
+  symbol:   variable swapContainer
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:41: error: cannot find symbol
+		rowsCleared = 0;
+		^
+  symbol:   variable rowsCleared
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:42: error: cannot find symbol
+		newShape();
+		^
+  symbol:   method newShape()
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:47: error: cannot find symbol
+		shapes.clear();
+		^
+  symbol:   variable shapes
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:53: error: cannot find symbol
+		clearBuffer.clear();
+		^
+  symbol:   variable clearBuffer
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:56: error: cannot find symbol
+		swapContainer = -1;
+		^
+  symbol:   variable swapContainer
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:57: error: cannot find symbol
+		rowsCleared = 0;
+		^
+  symbol:   variable rowsCleared
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:58: error: cannot find symbol
+		newShape();
+		^
+  symbol:   method newShape()
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:76: error: cannot find symbol
+        ActiveBlock.drawShape(grid, 0);
+                              ^
+  symbol:   variable grid
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:82: error: clearActiveBlock() has private access in GameView
+            PARENT.View().clearActiveBlock();
+                         ^
+src\syminical\tetris_sprint\MVC\GameModel.java:85: error: non-static method detectLeft(Block) cannot be referenced from a static context
+                    if (!BlockGrid.detectLeft(ActiveBlock))
+                                  ^
+src\syminical\tetris_sprint\MVC\GameModel.java:89: error: non-static method detectRight(Block) cannot be referenced from a static context
+                    if (!BlockGrid.detectRight(ActiveBlock))
+                                  ^
+src\syminical\tetris_sprint\MVC\GameModel.java:93: error: non-static method tryLeftTurn(Block) cannot be referenced from a static context
+                    BlockGrid.tryLeftTurn(ActiveBlock);
+                             ^
+src\syminical\tetris_sprint\MVC\GameModel.java:96: error: non-static method tryRightTurn(Block) cannot be referenced from a static context
+                    BlockGrid.tryRightTurn(ActiveBlock);
+                             ^
+src\syminical\tetris_sprint\MVC\GameModel.java:99: error: non-static method fastDrop(Block) cannot be referenced from a static context
+                    ActiveBlock.move(BlockGrid.fastDrop(ActiveBlock));
+                                              ^
+src\syminical\tetris_sprint\MVC\GameModel.java:99: error: cannot find symbol
+                    ActiveBlock.move(BlockGrid.fastDrop(ActiveBlock));
+                               ^
+  symbol:   method move(Point)
+  location: variable ActiveBlock of type Block
+src\syminical\tetris_sprint\MVC\GameModel.java:100: error: cannot find symbol
+                    commitBlock();
+                    ^
+  symbol:   method commitBlock()
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:107: error: non-static method clear() cannot be referenced from a static context
+        BlockGrid.clear();
+                 ^
+src\syminical\tetris_sprint\MVC\GameModel.java:111: error: incompatible types: BlockType cannot be converted to Block
+			SwapBlock = ActiveBlock.type();
+			                            ^
+src\syminical\tetris_sprint\MVC\GameModel.java:112: error: clearActiveBlock() has private access in GameView
+			PARENT.View().clearActiveBlock();
+			             ^
+src\syminical\tetris_sprint\MVC\GameModel.java:113: error: cannot find symbol
+			newShape();			
+			^
+  symbol:   method newShape()
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:115: error: cannot find symbol
+			BlockType __ = ActiveBlock.getType();
+			                          ^
+  symbol:   method getType()
+  location: variable ActiveBlock of type Block
+src\syminical\tetris_sprint\MVC\GameModel.java:116: error: clearActiveBlock() has private access in GameView
+            PARENT.View().clearActiveBlock();
+                         ^
+src\syminical\tetris_sprint\MVC\GameModel.java:118: error: incompatible types: BlockType cannot be converted to Block
+			SwapBlock = __;
+			            ^
+src\syminical\tetris_sprint\MVC\GameModel.java:123: error: non-static method detectDown(Block) cannot be referenced from a static context
+        if (BlockGrid.detectDown(ActiveBlock)) {
+                     ^
+src\syminical\tetris_sprint\MVC\GameModel.java:133: error: cannot find symbol
+                    checkRows();
+                    ^
+  symbol:   method checkRows()
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:134: error: cannot find symbol
+                    clearRows();
+                    ^
+  symbol:   method clearRows()
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:135: error: cannot find symbol
+                    newShape();
+                    ^
+  symbol:   method newShape()
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:140: error: cannot find symbol
+            PARENT.VIEW().clearActiveBlock();
+                  ^
+  symbol:   method VIEW()
+  location: variable PARENT of type GameController
+src\syminical\tetris_sprint\MVC\GameModel.java:151: error: cannot find symbol
+            case 1: __ = new L1(); break;
+                             ^
+  symbol:   class L1
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:152: error: cannot find symbol
+            case 2: __ = new L2(); break;
+                             ^
+  symbol:   class L2
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:153: error: cannot find symbol
+            case 3: __ = new Zig1(); break;
+                             ^
+  symbol:   class Zig1
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:154: error: cannot find symbol
+            case 4: __ = new Zig2(); break;
+                             ^
+  symbol:   class Zig2
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:156: error: cannot find symbol
+            case 6: __ = new Stick(); break;
+                             ^
+  symbol:   class Stick
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameModel.java:160: error: cannot find symbol
+		if (ActiveBlock != null) { BlockGrid.add(ActiveBlock); BlockGrid.checkRows(ActiveBlock); } 
+		                                    ^
+  symbol:   method add(Block)
+  location: class BlockGrid
+src\syminical\tetris_sprint\MVC\GameModel.java:160: error: checkRows(Block) has private access in BlockGrid
+		if (ActiveBlock != null) { BlockGrid.add(ActiveBlock); BlockGrid.checkRows(ActiveBlock); } 
+		                                                                ^
+src\syminical\tetris_sprint\MVC\GameController.java:20: error: cannot find symbol
+        Model().newShape();
+               ^
+  symbol:   method newShape()
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameView.java:36: error: cannot find symbol
+                if (PARENT.Model().dirtyGrid) {
+                                  ^
+  symbol:   variable dirtyGrid
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameView.java:36: error: illegal start of type
+                if (PARENT.Model().dirtyGrid) {
+                   ^
+src\syminical\tetris_sprint\MVC\GameView.java:57: error: cannot find symbol
+        g.fillRect(0, 0, 25 * PARENT.Model().BlockGrid.WIDTH(), 25 * PARENT.Model().BlockGrid.HEIGHT());
+                                            ^
+  symbol:   variable BlockGrid
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameView.java:57: error: cannot find symbol
+        g.fillRect(0, 0, 25 * PARENT.Model().BlockGrid.WIDTH(), 25 * PARENT.Model().BlockGrid.HEIGHT());
+                                                                                   ^
+  symbol:   variable BlockGrid
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameView.java:98: error: cannot find symbol
+			for (int i2 = 0; i2 < PARENT.Model().BlockGrid.data()[0].length; i2++)
+			                                    ^
+  symbol:   variable BlockGrid
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameView.java:99: error: cannot find symbol
+				if (PARENT.Model().grid[i + 4][i2] != BlockType.BLANK) {
+				                  ^
+  symbol:   variable grid
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameView.java:100: error: cannot find symbol
+					g.setColor(Block.colour(PARENT.Model().grid[i + 4][i2]));
+					                                      ^
+  symbol:   variable grid
+  location: class GameModel
+src\syminical\tetris_sprint\MVC\GameView.java:105: error: cannot find symbol
+        Block AB = PARENT.Model().ActiveBlock; s = AB.state();
+                                               ^
+  symbol:   variable s
+  location: class GameView
+src\syminical\tetris_sprint\MVC\GameView.java:105: error: cannot find symbol
+        Block AB = PARENT.Model().ActiveBlock; s = AB.state();
+                                                     ^
+  symbol:   method state()
+  location: variable AB of type Block
+src\syminical\tetris_sprint\MVC\GameView.java:110: error: cannot find symbol
+                if (AB.data()[AB.state()][i][j]) {
+                                ^
+  symbol:   method state()
+  location: variable AB of type Block
+src\syminical\tetris_sprint\MVC\GameView.java:115: error: cannot find symbol
+    private void clearActiveBlock() { clearActiveBlock(g); }
+                                                       ^
+  symbol:   variable g
+  location: class GameView
+src\syminical\tetris_sprint\MVC\GameView.java:119: error: cannot find symbol
+        clearActiveShape(g);
+        ^
+  symbol:   method clearActiveShape(Graphics)
+  location: class GameView
+src\syminical\tetris_sprint\MVC\GameView.java:123: error: cannot find symbol
+                if (AB.data()[AS.state()][i][j])
+                              ^
+  symbol:   variable AS
+  location: class GameView
+src\syminical\tetris_sprint\MVC\GameView.java:124: error: x is not public in Component; cannot be accessed from outside package
+                    g.fillRect((25 * (j + x)), (25 * (i + y - 4)), 25, 25);
+                                          ^
+src\syminical\tetris_sprint\MVC\GameView.java:124: error: y is not public in Component; cannot be accessed from outside package
+                    g.fillRect((25 * (j + x)), (25 * (i + y - 4)), 25, 25);
+                                                          ^
+src\syminical\tetris_sprint\Blocks\L_Left.java:4: error: initBlock() in L_Left cannot override initBlock() in Block
+    private void initBlock() {
+                 ^
+  attempting to assign weaker access privileges; was 
+src\syminical\tetris_sprint\Blocks\L_Left.java:7: error: cannot find symbol
+        end_state = 3; canTurn = true;
+        ^
+  symbol:   variable end_state
+  location: class L_Left
+src\syminical\tetris_sprint\Blocks\L_Left.java:8: error: cannot find symbol
+		type = L_LEFT;
+		       ^
+  symbol:   variable L_LEFT
+  location: class L_Left
+src\syminical\tetris_sprint\Blocks\L_Left.java:9: error: cannot find symbol
+        grid = new grid[end_state+1];
+                   ^
+  symbol:   class grid
+  location: class L_Left
+src\syminical\tetris_sprint\Blocks\L_Left.java:9: error: cannot find symbol
+        grid = new grid[end_state+1];
+                        ^
+  symbol:   variable end_state
+  location: class L_Left
+src\syminical\tetris_sprint\Blocks\L_Right.java:4: error: initBlock() in L_Right cannot override initBlock() in Block
+    private void initBlock() {
+                 ^
+  attempting to assign weaker access privileges; was 
+src\syminical\tetris_sprint\Blocks\L_Right.java:7: error: cannot find symbol
+        end_state = 3; canTurn = true;
+        ^
+  symbol:   variable end_state
+  location: class L_Right
+src\syminical\tetris_sprint\Blocks\L_Right.java:8: error: cannot find symbol
+		type = L_RIGHT;
+		       ^
+  symbol:   variable L_RIGHT
+  location: class L_Right
+src\syminical\tetris_sprint\Blocks\L_Right.java:9: error: cannot find symbol
+        grid = new grid[end_state+1];
+                   ^
+  symbol:   class grid
+  location: class L_Right
+src\syminical\tetris_sprint\Blocks\L_Right.java:9: error: cannot find symbol
+        grid = new grid[end_state+1];
+                        ^
+  symbol:   variable end_state
+  location: class L_Right
+src\syminical\tetris_sprint\Blocks\Square.java:4: error: initBlock() in Square cannot override initBlock() in Block
+    private void initBlock() {
+                 ^
+  attempting to assign weaker access privileges; was 
+src\syminical\tetris_sprint\Blocks\Square.java:7: error: cannot find symbol
+        end_state = 0; canTurn = false;
+        ^
+  symbol:   variable end_state
+  location: class Square
+src\syminical\tetris_sprint\Blocks\Square.java:8: error: cannot find symbol
+		type = SQUARE;
+		       ^
+  symbol:   variable SQUARE
+  location: class Square
+src\syminical\tetris_sprint\Blocks\Square.java:9: error: cannot find symbol
+        grid = new grid[end_state+1];
+                   ^
+  symbol:   class grid
+  location: class Square
+src\syminical\tetris_sprint\Blocks\Square.java:9: error: cannot find symbol
+        grid = new grid[end_state+1];
+                        ^
+  symbol:   variable end_state
+  location: class Square
+src\syminical\tetris_sprint\Blocks\Stick.java:4: error: initBlock() in STICK cannot override initBlock() in Block
+    private void initBlock() {
+                 ^
+  attempting to assign weaker access privileges; was 
+src\syminical\tetris_sprint\Blocks\Stick.java:7: error: cannot find symbol
+        end_state = 1; canTurn = true;
+        ^
+  symbol:   variable end_state
+  location: class STICK
+src\syminical\tetris_sprint\Blocks\Stick.java:8: error: cannot find symbol
+		type = STICK;
+		       ^
+  symbol:   variable STICK
+  location: class STICK
+src\syminical\tetris_sprint\Blocks\Stick.java:9: error: cannot find symbol
+        grid = new grid[end_state+1];
+                   ^
+  symbol:   class grid
+  location: class STICK
+src\syminical\tetris_sprint\Blocks\Stick.java:9: error: cannot find symbol
+        grid = new grid[end_state+1];
+                        ^
+  symbol:   variable end_state
+  location: class STICK
+src\syminical\tetris_sprint\Blocks\Tri.java:4: error: initBlock() in Tri cannot override initBlock() in Block
+    private void initBlock() {
+                 ^
+  attempting to assign weaker access privileges; was 
+src\syminical\tetris_sprint\Blocks\Tri.java:7: error: cannot find symbol
+        end_state = 3; canTurn = true;
+        ^
+  symbol:   variable end_state
+  location: class Tri
+src\syminical\tetris_sprint\Blocks\Tri.java:8: error: cannot find symbol
+		type = TRI;
+		       ^
+  symbol:   variable TRI
+  location: class Tri
+src\syminical\tetris_sprint\Blocks\Tri.java:9: error: cannot find symbol
+        grid = new grid[end_state+1];
+                   ^
+  symbol:   class grid
+  location: class Tri
+Note: src\syminical\tetris_sprint\Tetris_Sprint.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+100 errors

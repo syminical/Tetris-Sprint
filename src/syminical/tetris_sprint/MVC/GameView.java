@@ -52,6 +52,8 @@ public class GameView extends JPanel {
 		drawFps(g);
 	}
     
+    public void clearActiveBlock() { clearActiveBlock(g); }
+    
     private void clear(Graphics g) {
         g.setColor(Block.colour(BlockType.BLANK));
         g.fillRect(0, 0, 25 * PARENT.Model().BlockGrid.WIDTH(), 25 * PARENT.Model().BlockGrid.HEIGHT());
@@ -112,7 +114,6 @@ public class GameView extends JPanel {
                     g.fillRect(25 * (j + AB.x()), 25 * (i + AB.shadowY() - 4), 25, 25);
                 }
     }
-    private void clearActiveBlock() { clearActiveBlock(g); }
     private void drawActiveShape(Graphics g) {
         Block AB = PARENT.Model().ActiveBlock;
         g.setColor(Block.colour(AB.type()));

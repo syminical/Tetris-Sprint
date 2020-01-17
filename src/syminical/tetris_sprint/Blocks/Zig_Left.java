@@ -1,21 +1,21 @@
 package syminical.tetris_sprint;
 
-public class Stick extends Block {
+public class Zig_Left extends Block {
     private void initBlock() {
-		height = 4; width = 1;
-		x = 4; y = 0;
+		height = 3; width = 2;
+		x = 4; y = 1;
         end_state = 1; canTurn = true;
-		type = STICK;
+		type = ZIG_LEFT;
         grid = new grid[end_state+1];
         
         grid[0] = new boolean[][] {
-			{true}, 
-			{true}, 
-			{true},
-            {true}
+			{true, false},
+			{true, true}, 
+            {false, true}
 		};
         grid[1] = new boolean[][] {
-			{true, true, true, true}
+			{false, true, true},
+            {true, true, false}			
 		};
     }
 }

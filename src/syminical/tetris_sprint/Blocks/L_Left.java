@@ -1,35 +1,30 @@
 package syminical.tetris_sprint;
 
-public class L1 extends Block {
-
-    private boolean[][] grid2;
-    private boolean[][] grid3;
-    private boolean[][] grid4;
-    
+public class L_Left extends Block {
     private void initBlock() {
 		height = 3; width = 2;
 		x = 4; y = 1;
         end_state = 3; canTurn = true;
-		type = L_RIGHT;
+		type = L_LEFT;
         grid = new grid[end_state+1];
         
         grid[0] = new boolean[][] {
-			{true, false}, 
-			{true, false}, 
+			{false, true}, 
+			{false, true}, 
 			{true, true}
 		};
         grid[1] = new boolean[][] {
-			{true, true, true},
-			{true, false, false}
+			{true, false, false},
+            {true, true, true}
 		};
         grid[2] = new boolean[][] {
 			{true, true}, 
-			{false, true}, 
-			{false, true}
+			{true, false}, 
+			{true, false}
 		};
         grid[3] = new boolean[][] {
-			{false, false, true},
-			{true, true, true}
+			{true, true, true},
+            {false, false, true}
 		};   
     }
 }

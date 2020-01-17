@@ -2,6 +2,7 @@ package syminical.tetris_sprint;
 
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Point;
 
 public abstract class Block {
 
@@ -16,7 +17,7 @@ public abstract class Block {
 	public Block() { initBlock(); }
     
     //must init: grid, type
-    private abstract void initBlock();
+    abstract void initBlock();
     
     //public API
 	/*public void clearShape(int[][] container, int container2) {
@@ -96,28 +97,28 @@ public abstract class Block {
 					turnLeft();
 	}*/
     
-    public void setBlock(Point __) { x = __.getX(); y = __.getY(); }
-    public void updateShadow(int __) { shadow_y = __; }
-	public void influenceX(int __) { x += container; }
-	public void influenceY(int __) { y += container;	}
+    public void move(Point __) { x = (int)(__.getX()); y = (int)(__.getY()); shadowY = y; }
+    public void updateShadow(int __) { shadowY = __; }
+	public void influenceX(int __) { x += __; }
+	public void influenceY(int __) { y += __;	}
 
-	public static Color colour(int __) {
+	public static Color colour(BlockType __) {
 		switch(__) {
-			case 0:
+			case SQUARE:
 				return new Color(255, 255, 255);
-			case BlockType.L_RIGHT:
+			case STICK:
 				return new Color(235, 235, 235);
-			case 2:
+			case L_RIGHT:
 				return new Color(215, 215, 215);
-			case 3:
+			case L_LEFT:
 				return new Color(195, 195, 195);
-			case 4:
+			case TRI:
 				return new Color(175, 175, 175);
-			case 5:
+			case ZIG_RIGHT:
 				return new Color(155, 155, 155);
-			case 6:
+			case ZIG_LEFT:
 				return new Color(135, 135, 135);
-			case BlockType.BLANK:
+			case BLANK:
 				return Color.BLACK;
 			case 8:
 				return new Color(70, 70, 70);
@@ -126,12 +127,13 @@ public abstract class Block {
 				return Color.WHITE;
 		}
 	}
-	public int getType() { return type; }
+	public BlockType type() { return type; }
 	public int x() { return x; }
 	public int y() { return y; }
     public int shadowY() { return shadowY; }
 	public int height() { return height; }
-    public int width() { Return width; }
+    public int width() { return width; }
+    public int state() { return state; }
     public boolean[][][] data() { return grid; }
-    public String toString() { return "x: [" + x + "] | y: [" + y + "] | shadowY: [" + shadowY + "] | height: [" + height + "] | width: [" + width + "]"; }
+    public String toString() { return "x: [" + x + "] | y: [" + y + "] | shadowY: [" + shadowY + "] | height: [" + height + "] | width: [" + width + "] | state: [" + state + "]"; }
 }
