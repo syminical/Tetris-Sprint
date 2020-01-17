@@ -16,8 +16,8 @@ public class GameController {
     
     public void begin() {
 		Model().active = true;
-        Model().clearGrid();
-        Model().newShape();
+        Model().BlockGrid.clear();
+        Model().newBlock();
         Model().mode = 1;
         
 		//View().repaint();

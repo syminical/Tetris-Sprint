@@ -12,7 +12,7 @@ public class GameModel {
     public Block ActiveBlock;
     public BlockType SwapBlock;
     public BlockGrid Grid;
-	public boolean active = false, done = false, failed = false, force = false, swapped = false, first = false, right = false, left = false, up = false, down = false, frameReady = false;
+	public boolean active = false, done = false, failed = false, force = false, swapped = false, first = false, right = false, left = false, up = false, down = false, frameReady = false, dirtyGrid = false, ActiveBlockDirty = false;
 	public double startTime, endTime, endTimeTime;
 	public double cstart, cend, cwstart, cwend, dtime, clock, rightDown = 0, leftDown = 0, upDown = 0, downDown = 0;
 	public String endTimeS = "";
@@ -37,7 +37,7 @@ public class GameModel {
 		failed = false;
 		endTimeS = "";
 		swapped = false;
-		swapBlock = null;
+		SwapBlock = null;
 		newBlock();
 		bottomTime = 0;
 		startTime = System.currentTimeMillis();
@@ -50,7 +50,7 @@ public class GameModel {
 		failed = false;
 		endTimeS = "";
 		swapped = false;
-		swapBlock = null;
+		SwapBlock = null;
 		newBlock();
 		active = true;
 		bottomTime = 0;
@@ -105,12 +105,12 @@ public class GameModel {
 	public void swap() {
 		if (SwapBlock == null) {
 			SwapBlock = ActiveBlock.type();
-			PARENT.View().clearActiveBlock();
-			newShape();			
+			//ActiveBlockDirty = true;
+			newBlock();			
 		} else {
-			BlockType __ = ActiveBlock.getType();
-            PARENT.View().clearActiveBlock();
-			ActiveBlock = SwapBlock;
+			BlockType __ = ActiveBlock.type();
+            //PARENT.View().clearActiveBlock();
+			ActiveBlock = newBlock(SwapBlock);
 			SwapBlock = __;
 		}
         swapped = true;
@@ -126,34 +126,46 @@ public class GameModel {
                     done = true;
                     endTime = endTimeTime - startTime;
                 } else {
-                    checkRows();
-                    clearRows();
-                    newShape();
+                    BlockGrid.checkRows(ActiveBlock);
+                    newBlock();
                     bottomTime = 0;
                     force = false;
                 }
         } else {
-            PARENT.VIEW().clearActiveBlock();
+            //PARENT.View().clearActiveBlock();
             ActiveBlock.influenceY(1);
         }
         frameReady = false;
 	}
+    public Block newBlock(BlockType __) {
+        switch (__) {
+            case SQUARE: __ = return new Square();
+            case STICK: __ = return new Stick();
+            case L_RIGHT: __ = return new L_Right();
+            case L_LEFT: __ = return new L_Left();
+            case ZIG_LEFT: __ = return new Tri();
+            case TRI: __ = return new Zig_Right();
+            case ZIG_RIGHT: __ = return new Zig_Left();
+            
+            default: return null;
+        }
+    }
     public void newBlock() {
 		Block __;
         swapped = false;
         
         switch ((int)(Math.random() * 7)) {
             case 0: __ = new Square(); break;
-            case 1: __ = new L1(); break;
-            case 2: __ = new L2(); break;
-            case 3: __ = new Zig1(); break;
-            case 4: __ = new Zig2(); break;
-            case 5: __ = new Tri(); break;
-            case 6: __ = new Stick(); break;
+            case 1: __ = new Stick(); break;
+            case 2: __ = new L_Right(); break;
+            case 3: __ = new L_Left(); break;
+            case 4: __ = new Tri(); break;
+            case 5: __ = new Zig_Right(); break;
+            case 6: __ = new Zig_Left(); break;
             default:
         }
         
-		if (ActiveBlock != null) { BlockGrid.add(ActiveBlock); BlockGrid.checkRows(ActiveBlock); } 
+		if (ActiveBlock != null) { BlockGrid.addBlock(ActiveBlock); BlockGrid.checkRows(ActiveBlock); } 
         ActiveBlock = __;
 	}
 

@@ -114,16 +114,17 @@ public class BlockGrid {
 		}
 		deFrag();
 	}
-    private void checkRows(Block __) {
+    ppublic void checkRows(Block __) {
 		boolean full;
         
 		for (int i = __.y() + __.height() - 1; i > __.y() - 1; --i) {
 			full = true;
 			for (int j = 0; j < WIDTH; ++j)
-				if (grid[i][i2] == BlockType.BLANK)
+				if (grid[i][j] == BlockType.BLANK)
 					full = false;
 			if (full) clearBuffer.add(i);
 		}
+        if (clearBuffer.size() > 0) clearRows();
 	}
     
     public int HIDDEN_HEIGHT() { return HIDDEN_HEIGHT; }
@@ -131,6 +132,6 @@ public class BlockGrid {
     public int WIDTH() { return WIDTH; }
     public int rowsCleared() { return rowsCleared; }
     public BlockType[][] data() { return grid; }
-    public void clear() { grid = new int[HEIGHT + HIDDEN_HEIGHT][WIDTH]; clearBuffer.clear(); }
+    public void clear() { grid = new BlockType[HEIGHT + HIDDEN_HEIGHT][WIDTH]; clearBuffer.clear(); }
     public void reset() { clear(); clearBuffer.clear(); rowsCleared = 0; }
 }

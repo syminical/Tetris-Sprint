@@ -17,7 +17,7 @@ public abstract class Block {
 	public Block() { initBlock(); }
     
     //must init: grid, type
-    abstract void initBlock();
+    protected abstract void initBlock();
     
     //public API
 	/*public void clearShape(int[][] container, int container2) {

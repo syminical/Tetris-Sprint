@@ -1,12 +1,12 @@
 package syminical.tetris_sprint;
 
 public class L_Right extends Block {
-    private void initBlock() {
+    protected void initBlock() {
 		height = 3; width = 2;
 		x = 4; y = 1;
-        end_state = 3; canTurn = true;
-		type = L_RIGHT;
-        grid = new grid[end_state+1];
+        endState = 3; canTurn = true;
+		type = BlockType.L_RIGHT;
+        grid = new grid[endState+1];
         
         grid[0] = new boolean[][] {
 			{true, false}, 

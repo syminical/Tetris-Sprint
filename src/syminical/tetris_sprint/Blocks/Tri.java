@@ -1,12 +1,12 @@
 package syminical.tetris_sprint;
 
 public class Tri extends Block {
-    private void initBlock() {
+    protected void initBlock() {
 		height = 2; width = 3;
 		x = 4; y = 2;
-        end_state = 3; canTurn = true;
-		type = TRI;
-        grid = new grid[end_state+1];
+        endState = 3; canTurn = true;
+		type = BlockType.TRI;
+        grid = new grid[endState+1];
         
         grid[0] = new boolean[][] {
 			{true, true, true}, 

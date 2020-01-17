@@ -52,11 +52,9 @@ public class GameView extends JPanel {
 		drawFps(g);
 	}
     
-    public void clearActiveBlock() { clearActiveBlock(g); }
-    
     private void clear(Graphics g) {
         g.setColor(Block.colour(BlockType.BLANK));
-        g.fillRect(0, 0, 25 * PARENT.Model().BlockGrid.WIDTH(), 25 * PARENT.Model().BlockGrid.HEIGHT());
+        g.fillRect(0, 0, 25 * PARENT.Model().Grid.WIDTH(), 25 * PARENT.Model().Grid.HEIGHT());
     }
     private void drawEnd(Graphics g) {
 		drawGrid(g);
@@ -97,14 +95,14 @@ public class GameView extends JPanel {
     }
 	private void drawGrid(Graphics g) {
         for (int i = 0; i < 20; i++)
-			for (int i2 = 0; i2 < PARENT.Model().BlockGrid.data()[0].length; i2++)
-				if (PARENT.Model().grid[i + 4][i2] != BlockType.BLANK) {
-					g.setColor(Block.colour(PARENT.Model().grid[i + 4][i2]));
+			for (int i2 = 0; i2 < PARENT.Model().Grid.data()[0].length; i2++)
+				if (PARENT.Model().Grid.data()[i + 4][i2] != BlockType.BLANK) {
+					g.setColor(Block.colour(PARENT.Model().Grid.data()[i + 4][i2]));
 					g.fillRect( (25 * i2), (25 * i), 25, 25);
 				}
     }
-    private void clearActiveBlock(Graphics g) {
-        Block AB = PARENT.Model().ActiveBlock; s = AB.state();
+    /*private void clearActiveBlock(Graphics g) {
+        Block AB = PARENT.Model().ActiveBlock;
         g.setColor(Block.colour(BlockType.BLANK));
         
         for (int i = 0; i < AB.height(); ++i)
@@ -113,16 +111,17 @@ public class GameView extends JPanel {
                     g.fillRect(25 * (j + AB.x()), 25 * (i + AB.y() - 4), 25, 25);
                     g.fillRect(25 * (j + AB.x()), 25 * (i + AB.shadowY() - 4), 25, 25);
                 }
-    }
-    private void drawActiveShape(Graphics g) {
+    }*/
+    private void drawActiveBlock(Graphics g) {
         Block AB = PARENT.Model().ActiveBlock;
         g.setColor(Block.colour(AB.type()));
-        clearActiveShape(g);
+        
+        //if (PARENT.Model().ActiveBlockDirty) clearActiveBlock(g);
         
         for (int i = 0; i < AB.height(); ++i)
             for (int j = 0; j < AB.width(); ++j)
-                if (AB.data()[AS.state()][i][j])
-                    g.fillRect((25 * (j + x)), (25 * (i + y - 4)), 25, 25);
+                if (AB.data()[AB.state()][i][j])
+                    g.fillRect((25 * (j + AB.x())), (25 * (i + AB.y() - 4)), 25, 25);
     }
 	private void drawFps(Graphics g) {
 		g.setColor(Color.WHITE);
