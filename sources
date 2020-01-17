@@ -1,13 +1,13 @@
 src/syminical/tetris_sprint/Blocks/Block.java
 src/syminical/tetris_sprint/Blocks/BlockGrid.java
 src/syminical/tetris_sprint/Blocks/BlockType.java
-src/syminical/tetris_sprint/Blocks/L1.java
-src/syminical/tetris_sprint/Blocks/L2.java
+src/syminical/tetris_sprint/Blocks/L_Left.java
+src/syminical/tetris_sprint/Blocks/L_Right.java
 src/syminical/tetris_sprint/Blocks/Square.java
 src/syminical/tetris_sprint/Blocks/Stick.java
 src/syminical/tetris_sprint/Blocks/Tri.java
-src/syminical/tetris_sprint/Blocks/Zig1.java
-src/syminical/tetris_sprint/Blocks/Zig2.java
+src/syminical/tetris_sprint/Blocks/Zig_Left.java
+src/syminical/tetris_sprint/Blocks/Zig_Right.java
 src/syminical/tetris_sprint/GUI/WindowAtlas.java
 src/syminical/tetris_sprint/GUI/WindowBox.java
 src/syminical/tetris_sprint/GUI/Zone.java
