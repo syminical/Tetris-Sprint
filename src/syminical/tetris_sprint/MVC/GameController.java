@@ -87,6 +87,7 @@ public class GameController {
         }
     }
     
+    public Tetris_Sprint PARENT() { return PARENT; }
     public GameModel Model() { return GModel; }
     public GameView View() { return GView; }
     public Tetris_Sprint Parent() { return PARENT; }
