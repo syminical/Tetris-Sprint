@@ -83,11 +83,14 @@ public class Tetris_Sprint {
                 addComponent(new JLabel(">>> shoot your shot <<<"));
                 addComponent(new JLabel("[ prev key: NONE ]"));
                 addComponent(new JLabel("[ curr key: NONE ]"));
+                addComponent(new JLabel("[ActiveBlock:]"));
             }
             
             public void tell(int n) {
                 //if (!isVisible()) return;
                 switch (n) {
+                    case 1:
+                        ((JLabel)(this.getComponent(4))).setText("[ActiveBlock: " + Parent().GC.Model().ActiveBlock + " ]");
                     default:
                         ((JLabel)(this.getComponent(0))).setText("Welcome to the Dev Box! =D   [fps: " + GC.Model().fps + "]");
                 }
@@ -97,7 +100,7 @@ public class Tetris_Sprint {
             
             public void tell(int n, String S) {
                 switch (n) {
-                    case 20: ((JLabel)(this.getComponent(1))).setText(">>> " + S + " <<<"); break;
+                    case 20: ((JLabel)(this.getComponent(1))).setText(">>> " + S + " <<<"); tell(1); break;
                     case 21: ((JLabel)(this.getComponent(2))).setText("[ prev key: " + S + " ]"); break;
                     case 22: ((JLabel)(this.getComponent(3))).setText("[ curr key: " + S + " ]"); break;
                     default:
@@ -120,6 +123,8 @@ public class Tetris_Sprint {
             case 3:
                 DevBox.tell(42);
                 break;
+            case 4:
+                DevBox.tell(0);
             default:
         }
     }
