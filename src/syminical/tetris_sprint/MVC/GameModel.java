@@ -114,11 +114,12 @@ public class GameModel {
 			SwapBlock = __;
 		}
         swapped = true;
+        PARENT.PARENT().tell(4);
 	}
 	public void forceDrop() {
         if (Grid.detectDown(ActiveBlock)) {
             bottomTime++;
-            
+            System.out.println("*");
             if (bottomTime >= 3)
                 if (ActiveBlock.y() < 4) {
                     endTimeTime = System.currentTimeMillis();
@@ -166,6 +167,7 @@ public class GameModel {
         
 		if (ActiveBlock != null) { Grid.addBlock(ActiveBlock); Grid.checkRows(ActiveBlock); } 
         ActiveBlock = __;
+        PARENT.PARENT().tell(4);
 	}
 
 	public void getInput() {
