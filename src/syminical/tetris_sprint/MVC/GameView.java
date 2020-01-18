@@ -33,10 +33,11 @@ public class GameView extends JPanel {
         
         switch (PARENT.Model().mode) {
             case 1:
-                if (PARENT.Model().dirtyGrid) {
+                //if (PARENT.Model().dirtyGrid) {
                     clear(g);
                     drawGrid(g);
-                }
+                //}
+                
                 drawActiveBlock(g);
 				drawLines(g);
                 break;
