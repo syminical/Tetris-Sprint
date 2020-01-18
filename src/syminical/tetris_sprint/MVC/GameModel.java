@@ -78,29 +78,29 @@ public class GameModel {
             //PARENT.View().clearActiveBlock();
             switch (InBuffer.next()) {
                 case LEFT:
-                    if (!BlockGrid.detectLeft(ActiveBlock))
+                    if (!Grid.detectLeft(ActiveBlock))
                         ActiveBlock.influenceX(-1);
                     break;
                 case RIGHT:
-                    if (!BlockGrid.detectRight(ActiveBlock))
+                    if (!Grid.detectRight(ActiveBlock))
                         ActiveBlock.influenceX(1);
                     break;
                 case TURN_LEFT:
-                    BlockGrid.tryLeftTurn(ActiveBlock);
+                    Grid.tryLeftTurn(ActiveBlock);
                     break;
                 case TURN_RIGHT:
-                    BlockGrid.tryRightTurn(ActiveBlock);
+                    Grid.tryRightTurn(ActiveBlock);
                     break;
                 case FAST_DROP:
-                    ActiveBlock.move(BlockGrid.fastDrop(ActiveBlock));
-                    BlockGrid.addBlock(ActiveBlock);
+                    ActiveBlock.move(Grid.fastDrop(ActiveBlock));
+                    Grid.addBlock(ActiveBlock);
                     newBlock();
                 default:
             }
         }
 	}
 	public void clearGrid() {
-        BlockGrid.clear();
+        Grid.clear();
 	}
 	public void swap() {
 		if (SwapBlock == null) {
@@ -116,7 +116,7 @@ public class GameModel {
         swapped = true;
 	}
 	public void forceDrop() {
-        if (BlockGrid.detectDown(ActiveBlock)) {
+        if (Grid.detectDown(ActiveBlock)) {
             bottomTime++;
             
             if (bottomTime >= 3)
@@ -126,7 +126,7 @@ public class GameModel {
                     done = true;
                     endTime = endTimeTime - startTime;
                 } else {
-                    BlockGrid.checkRows(ActiveBlock);
+                    Grid.checkRows(ActiveBlock);
                     newBlock();
                     bottomTime = 0;
                     force = false;
@@ -150,7 +150,7 @@ public class GameModel {
         }
     }
     public void newBlock() {
-		Block __;
+		Block __ = null;
         swapped = false;
         
         switch ((int)(Math.random() * 7)) {
@@ -164,7 +164,7 @@ public class GameModel {
             default:
         }
         
-		if (ActiveBlock != null) { BlockGrid.addBlock(ActiveBlock); BlockGrid.checkRows(ActiveBlock); } 
+		if (ActiveBlock != null) { Grid.addBlock(ActiveBlock); Grid.checkRows(ActiveBlock); } 
         ActiveBlock = __;
 	}
 

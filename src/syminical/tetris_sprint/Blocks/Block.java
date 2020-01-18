@@ -120,9 +120,9 @@ public abstract class Block {
 				return new Color(135, 135, 135);
 			case BLANK:
 				return Color.BLACK;
-			case 8:
+			/*case 8:
 				return new Color(70, 70, 70);
-				//return Color.GRAY;
+				//return Color.GRAY;*/
 			default: 
 				return Color.WHITE;
 		}

@@ -43,6 +43,7 @@ public class BlockGrid {
                 if (B.data()[B.state][i][j])
                     if (grid[B.y()+i+1][B.x()+j] != BlockType.BLANK)
                         return true;
+        return false;
 	}
 	public boolean detectLeft(Block B) {
         if (B.x() == 0) return true;
@@ -52,6 +53,7 @@ public class BlockGrid {
                 if (B.data()[B.state()][i][j])
                     if (grid[B.y()+i][B.x()+j-1] != BlockType.BLANK)
                         return true;
+        return false;
 	}
 	public boolean detectRight(Block B) {
         if (B.x()+B.width() == WIDTH) return true;
@@ -61,6 +63,7 @@ public class BlockGrid {
                 if (B.data()[B.state()][i][j])
                     if (grid[B.y()+i][B.x()+j+1] != BlockType.BLANK)
                         return true;
+        return false;
     }
     
     public boolean tryLeftTurn(Block B) {
