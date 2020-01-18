@@ -17,6 +17,7 @@ public class BlockGrid {
     public BlockGrid(GameModel __) { PARENT = __; }
     
     public void addBlock(Block __) {
+        if (__ == null) return;
         for (int i = __.height(); i < __.height; ++i)
             for (int j = __.width(); j < __.width; ++j)
                 if (__.data()[__.state()][i][j]) {
@@ -26,6 +27,7 @@ public class BlockGrid {
     }
     
     public Point fastDrop(Block B) {
+        if (B == null) return new Point(0, 0);
         int answer = HEIGHT;
         
         for (int i = 0; i < B.width(); ++i)
@@ -36,56 +38,61 @@ public class BlockGrid {
     }
     
     public boolean detectDown(Block B) {
+        if (B == null) return true;
         if (B.y()+B.height() == HEIGHT) return true;
         
         for (int i = B.height()-1; i > -1; --i)
             for (int j = 0; j < B.width(); ++j)
                 if (B.data()[B.state][i][j])
-                    if (grid[B.y()+i+1][B.x()+j] != BlockType.BLANK)
+                    if (grid[B.y()+i+1][B.x()+j] != null)
                         return true;
         return false;
 	}
 	public boolean detectLeft(Block B) {
+        if (B == null) return true;
         if (B.x() == 0) return true;
         
         for (int i = B.height()-1; i > -1; --i)
             for (int j = 0; j < B.width(); ++j)
                 if (B.data()[B.state()][i][j])
-                    if (grid[B.y()+i][B.x()+j-1] != BlockType.BLANK)
+                    if (grid[B.y()+i][B.x()+j-1] != null)
                         return true;
         return false;
 	}
 	public boolean detectRight(Block B) {
+        if (B == null) return true;
         if (B.x()+B.width() == WIDTH) return true;
         
         for (int i = B.height()-1; i > -1; --i)
             for (int j = 0; j < B.width(); ++j)
                 if (B.data()[B.state()][i][j])
-                    if (grid[B.y()+i][B.x()+j+1] != BlockType.BLANK)
+                    if (grid[B.y()+i][B.x()+j+1] != null)
                         return true;
         return false;
     }
     
     public boolean tryLeftTurn(Block B) {
+        if (B == null) return true;
         boolean success = true;
         B.turnLeft();
         
         for (int i = B.height()-1; i > -1; --i)
             for (int j = 0; j < B.width(); ++j)
                 if (B.data()[B.state()][i][j])
-                    if(grid[B.y()+i][B.x()+j] != BlockType.BLANK) {
+                    if(grid[B.y()+i][B.x()+j] != null) {
                         success = false; break; }
         if (!success) B.turnRight();
         return success;
     }
     public boolean tryRightTurn(Block B) {
+        if (B == null) return true;
         boolean success = true;
         B.turnRight();
         
         for (int i = B.height(); i > -1; --i)
             for (int j = B.width()-1; j > -1; --j)
                 if (B.data()[B.state()][i][j])
-                    if(grid[B.y()+i][B.x()+j] != BlockType.BLANK) {
+                    if(grid[B.y()+i][B.x()+j] != null) {
                         success = false; break; }
         if (!success) B.turnLeft();
         return success;
@@ -97,11 +104,12 @@ public class BlockGrid {
 		
 		while (clearBuffer.size() > 0) {
 			for (int i = clearBuffer.get(0) + precision; i > 3; i--)
-				for (int i2 = 0; i2 < WIDTH; ++i2)
+				//for (int j = 0; j < WIDTH; ++j)
 					grid[i] = grid[i - 1];
 
-			for (int i = 0; i < WIDTH; ++i)
-				Arrays.fill(grid[4], BlockType.BLANK);
+	/*		for (int i = 0; i < WIDTH; ++i)
+				Arrays.fill(grid[4], BlockType.BLANK);*/
+                grid[4] = new BlockType[WIDTH];
 
 			++precision;
 			clearBuffer.remove(0);
@@ -136,5 +144,5 @@ public class BlockGrid {
     public int rowsCleared() { return rowsCleared; }
     public BlockType[][] data() { return grid; }
     public void clear() { grid = new BlockType[HEIGHT + HIDDEN_HEIGHT][WIDTH]; clearBuffer.clear(); }
-    public void reset() { clear(); clearBuffer.clear(); rowsCleared = 0; }
+    public void reset() { clear(); rowsCleared = 0; }
 }
