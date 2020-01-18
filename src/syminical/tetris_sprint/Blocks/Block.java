@@ -103,6 +103,7 @@ public abstract class Block {
 	public void influenceY(int __) { y += __;	}
 
 	public static Color colour(BlockType __) {
+        if (__ == null) return Color.BLACK;
 		switch(__) {
 			case SQUARE:
 				return new Color(255, 255, 255);
