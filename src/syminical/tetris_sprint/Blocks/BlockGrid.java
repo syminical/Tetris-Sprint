@@ -114,7 +114,7 @@ public class BlockGrid {
 		}
 		deFrag();
 	}
-    ppublic void checkRows(Block __) {
+    public void checkRows(Block __) {
 		boolean full;
         
 		for (int i = __.y() + __.height() - 1; i > __.y() - 1; --i) {

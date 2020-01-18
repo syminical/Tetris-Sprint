@@ -37,7 +37,7 @@ public class GameView extends JPanel {
                     clear(g);
                     drawGrid(g);
                 }
-                drawActiveShape(g);
+                drawActiveBlock(g);
 				drawLines(g);
                 break;
             case 2:

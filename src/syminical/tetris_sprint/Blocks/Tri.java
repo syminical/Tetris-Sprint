@@ -6,7 +6,7 @@ public class Tri extends Block {
 		x = 4; y = 2;
         endState = 3; canTurn = true;
 		type = BlockType.TRI;
-        grid = new grid[endState+1];
+        grid = new boolean[endState+1][][];
         
         grid[0] = new boolean[][] {
 			{true, true, true}, 

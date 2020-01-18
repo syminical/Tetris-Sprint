@@ -6,7 +6,7 @@ public class Stick extends Block {
 		x = 4; y = 0;
         endState = 1; canTurn = true;
 		type = BlockType.STICK;
-        grid = new grid[endState+1];
+        grid = new boolean[endState+1][][];
         
         grid[0] = new boolean[][] {
 			{true}, 

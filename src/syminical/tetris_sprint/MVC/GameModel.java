@@ -75,7 +75,7 @@ public class GameModel {
 
     public void emptyInputBuffer() {
 		while (InBuffer.size() > 0) {
-            PARENT.View().clearActiveBlock();
+            //PARENT.View().clearActiveBlock();
             switch (InBuffer.next()) {
                 case LEFT:
                     if (!BlockGrid.detectLeft(ActiveBlock))
@@ -139,14 +139,13 @@ public class GameModel {
 	}
     public Block newBlock(BlockType __) {
         switch (__) {
-            case SQUARE: __ = return new Square();
-            case STICK: __ = return new Stick();
-            case L_RIGHT: __ = return new L_Right();
-            case L_LEFT: __ = return new L_Left();
-            case ZIG_LEFT: __ = return new Tri();
-            case TRI: __ = return new Zig_Right();
-            case ZIG_RIGHT: __ = return new Zig_Left();
-            
+            case SQUARE: return new Square();
+            case STICK: return new Stick();
+            case L_RIGHT: return new L_Right();
+            case L_LEFT: return new L_Left();
+            case ZIG_LEFT: return new Tri();
+            case TRI: return new Zig_Right();
+            case ZIG_RIGHT: return new Zig_Left();
             default: return null;
         }
     }

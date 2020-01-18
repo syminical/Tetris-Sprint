@@ -6,7 +6,7 @@ public class L_Left extends Block {
 		x = 4; y = 1;
         endState = 3; canTurn = true;
 		type = BlockType.L_LEFT;
-        grid = new grid[endState+1];
+        grid = new boolean[endState+1][][];
         
         grid[0] = new boolean[][] {
 			{false, true}, 

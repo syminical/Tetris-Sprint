@@ -6,7 +6,7 @@ public class Zig_Right extends Block {
 		x = 4; y = 1;
         endState = 1; canTurn = true;
 		type = BlockType.ZIG_RIGHT;
-        grid = new grid[endState+1];
+        grid = new boolean[endState+1][][];
         
         grid[0] = new boolean[][] {
 			{false, true}, 

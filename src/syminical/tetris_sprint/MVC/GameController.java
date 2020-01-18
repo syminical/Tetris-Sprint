@@ -16,7 +16,7 @@ public class GameController {
     
     public void begin() {
 		Model().active = true;
-        Model().BlockGrid.clear();
+        Model().Grid.clear();
         Model().newBlock();
         Model().mode = 1;
         
