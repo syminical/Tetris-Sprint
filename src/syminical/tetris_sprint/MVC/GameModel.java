@@ -127,6 +127,7 @@ public class GameModel {
                     done = true;
                     endTime = endTimeTime - startTime;
                 } else {
+                    Grid.addBlock(ActiveBlock);
                     Grid.checkRows(ActiveBlock);
                     newBlock();
                     bottomTime = 0;
@@ -165,9 +166,9 @@ public class GameModel {
             default:
         }
         
-		if (ActiveBlock != null) { Grid.addBlock(ActiveBlock); Grid.checkRows(ActiveBlock); } 
+		//if (ActiveBlock != null) { Grid.addBlock(ActiveBlock); Grid.checkRows(ActiveBlock); } 
         ActiveBlock = __;
-        PARENT.PARENT().tell(4);
+        //PARENT.PARENT().tell(4);
 	}
 
 	public void getInput() {
