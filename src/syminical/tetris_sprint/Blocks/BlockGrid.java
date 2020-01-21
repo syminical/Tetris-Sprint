@@ -6,9 +6,10 @@ import java.awt.Point;
 
 public class BlockGrid {
     private final GameModel PARENT;
-    private final int HIDDEN_HEIGHT = 5;
-    private final int HEIGHT = 20;
+    private final int HIDDEN_HEIGHT = 4;
+    private final int HEIGHT = 24;
     private final int WIDTH = 10;
+    private int size = 0;
     private int rowsCleared = 0;
     private ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
     private BlockType[][] grid = new BlockType[HEIGHT + HIDDEN_HEIGHT][WIDTH];
@@ -18,12 +19,13 @@ public class BlockGrid {
     
     public void addBlock(Block __) {
         if (__ == null) return;
-        for (int i = __.height(); i < __.height; ++i)
-            for (int j = __.width(); j < __.width; ++j)
+        for (int i = 0; i < __.height; ++i)
+            for (int j = 0; j < __.width; ++j)
                 if (__.data()[__.state()][i][j]) {
-                    if (peaks[j] > i) peaks[j] = i;                    
-                    grid[i][j] = __.type();
+                    if (peaks[j + __.x()] > i) peaks[j + __.x()] = i;                    
+                    grid[i + __.y()][j + __.x()] = __.type();
                 }
+        ++size;
     }
     
     public Point fastDrop(Block B) {
@@ -120,7 +122,7 @@ public class BlockGrid {
     
     private void clearRows() {
 		for (Integer container : clearBuffer) {
-			Arrays.fill(grid[container], BlockType.BLANK);            
+			grid[container] = new BlockType[WIDTH];            
 			++rowsCleared;
 		}
 		deFrag();
@@ -131,8 +133,9 @@ public class BlockGrid {
 		for (int i = __.y() + __.height() - 1; i > __.y() - 1; --i) {
 			full = true;
 			for (int j = 0; j < WIDTH; ++j)
-				if (grid[i][j] == BlockType.BLANK)
-					full = false;
+				if (grid[i][j] == null) {
+					full = false; break;
+                }
 			if (full) clearBuffer.add(i);
 		}
         if (clearBuffer.size() > 0) clearRows();
@@ -142,7 +145,20 @@ public class BlockGrid {
     public int HEIGHT() { return HEIGHT; }
     public int WIDTH() { return WIDTH; }
     public int rowsCleared() { return rowsCleared; }
+    public int size() { return size; }
     public BlockType[][] data() { return grid; }
     public void clear() { grid = new BlockType[HEIGHT + HIDDEN_HEIGHT][WIDTH]; clearBuffer.clear(); }
     public void reset() { clear(); rowsCleared = 0; }
+    public String toString() {
+        String __ = "";    
+
+        for (int i = 0; i < HEIGHT; ++i) {
+            __ += "[ ";
+            for (int j = 0; j < WIDTH; ++j)
+                __ += "" + grid[i][j] + " ";
+            __ += "]\n";
+        }
+        
+        return __;
+    }
 }
