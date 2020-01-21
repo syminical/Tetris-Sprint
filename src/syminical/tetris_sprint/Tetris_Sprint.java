@@ -84,6 +84,9 @@ public class Tetris_Sprint {
                 addComponent(new JLabel("[ prev key: NONE ]"));
                 addComponent(new JLabel("[ curr key: NONE ]"));
                 addComponent(new JLabel("[ActiveBlock:]"));
+                addComponent(new JLabel("[In-Active Blocks:]"));
+                addComponent(new JLabel("[Rows Cleared:]"));
+                //addComponent(new JTextArea("{GRID}") {  { this.setOpaque(false); this.setEditable(false); } });
             }
             
             public void tell(int n) {
@@ -93,6 +96,10 @@ public class Tetris_Sprint {
                         ((JLabel)(this.getComponent(4))).setText("[ActiveBlock: " + Parent().GC.Model().ActiveBlock + " ]");
                     default:
                         ((JLabel)(this.getComponent(0))).setText("Welcome to the Dev Box! =D   [fps: " + GC.Model().fps + "]");
+                        ((JLabel)(this.getComponent(5))).setText("[Inactive Blocks: "+Parent().GC.Model().Grid.size()+ "]");
+                        ((JLabel)(this.getComponent(4))).setText("[ActiveBlock: " + Parent().GC.Model().ActiveBlock + " ]");
+                        ((JLabel)(this.getComponent(6))).setText("[Rows Cleared: " + Parent().GC.Model().Grid.rowsCleared() + "]");
+                        //((JTextArea)(this.getComponent(7))).setText(Parent().GC.Model().Grid.toString());
                 }
                 this.pack();
                 this.repaint();
