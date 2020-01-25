@@ -12,17 +12,17 @@ public class BlockGrid {
     private int size = 0;
     private int rowsCleared = 0;
     private ArrayList<Integer> clearBuffer = new ArrayList<Integer>();
-    private BlockType[][] grid = new BlockType[HEIGHT + HIDDEN_HEIGHT][WIDTH];
+    private BlockType[][] grid = new BlockType[HEIGHT][WIDTH];
     private int[] peaks = new int[WIDTH];
     
-    public BlockGrid(GameModel __) { PARENT = __; }
+    public BlockGrid(GameModel __) { PARENT = __; Arrays.fill(peaks, 24); }
     
     public void addBlock(Block __) {
         if (__ == null) return;
         for (int i = 0; i < __.height; ++i)
             for (int j = 0; j < __.width; ++j)
                 if (__.data()[__.state()][i][j]) {
-                    if (peaks[j + __.x()] > i) peaks[j + __.x()] = i;                    
+                    if (peaks[j + __.x()] > i + __.y()) peaks[j + __.x()] = i + __.y();
                     grid[i + __.y()][j + __.x()] = __.type();
                 }
         ++size;
@@ -36,7 +36,7 @@ public class BlockGrid {
             if (peaks[B.x()+i] < answer)
                 answer = peaks[B.x()+i];
         
-        return new Point(B.x(), answer);
+        return new Point(B.x(), answer-B.height());
     }
     
     public boolean detectDown(Block B) {
