@@ -220,6 +220,24 @@ public class GameModel {
     }
     public void rReleased() { restart(); }
     public void cReleased() { swap(); }
+    public void spaceReleased() {
+        if (ActiveBlock == null) return;
+        ActiveBlock.move(Grid.fastDrop(ActiveBlock));
+        if (!Grid.detectDown(ActiveBlock)) ActiveBlock.influenceY(1);
+        Grid.addBlock(ActiveBlock);
+        
+        if (ActiveBlock.y() < 4) {
+            endTimeTime = System.currentTimeMillis();
+            failed = true;
+            done = true;
+            endTime = endTimeTime - startTime;
+        } else {
+            Grid.checkRows(ActiveBlock);
+            newBlock();
+            bottomTime = 0;
+            force = false;
+        }
+    }
 
 	/*private void listeners() {
 		this.addMouseListener(new MouseAdapter() {

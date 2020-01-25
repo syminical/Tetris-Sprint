@@ -83,6 +83,7 @@ public class GameController {
             case KeyEvent.VK_DOWN: Model().downReleased(); break;
             case KeyEvent.VK_R: Model().rReleased(); break;
             case KeyEvent.VK_C: Model().cReleased(); break;
+            case KeyEvent.VK_SPACE: Model().spaceReleased(); break;
             default:
         }
     }
