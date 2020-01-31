@@ -7,7 +7,7 @@ import java.util.*;
 
 public class GameView extends JPanel {
     private final GameController PARENT;
-    private int mode = 0;
+    private int State = 0;
 	private Font buttonFont = new Font("Comic Sans MS", Font.BOLD, 32);
 	private Font timeFont = new Font("Comic Sans MS", Font.PLAIN, 50);
     private static Font tipFont = new Font("Comic Sans MS", Font.BOLD, 12);
@@ -18,11 +18,11 @@ public class GameView extends JPanel {
 		setBackground(Color.BLACK);
     }
     
-    /*public void mode(int n) {
+    /*public void State(int n) {
         switch (n) {
-            case 1: mode = 1; repaint(); break;
-            case 2: mode = 2; break;
-            default: mode = 0;
+            case 1: State = 1; repaint(); break;
+            case 2: State = 2; break;
+            default: State = 0;
         }
     }*/
     
@@ -31,17 +31,18 @@ public class GameView extends JPanel {
     public void paintComponent(Graphics g) {
 		super.paintComponent(g);
         
-        switch (PARENT.Model().mode) {
-            case 1:
+        switch (PARENT.Model().State) {
+            case RUNNING:
                 //if (PARENT.Model().dirtyGrid) {
                     clear(g);
                     drawGrid(g);
                 //}
                 
                 drawActiveBlock(g);
+                drawPeaks(g);
 				drawLines(g);
                 break;
-            case 2:
+            case END:
                 drawEnd(g);
                 break;
             default:
@@ -54,7 +55,7 @@ public class GameView extends JPanel {
 	}
     
     private void clear(Graphics g) {
-        g.setColor(Block.colour(BlockType.BLANK));
+        g.setColor(Block.colour(null));
         g.fillRect(0, 0, 25 * PARENT.Model().Grid.WIDTH(), 25 * PARENT.Model().Grid.HEIGHT());
     }
     private void drawEnd(Graphics g) {
@@ -118,14 +119,25 @@ public class GameView extends JPanel {
     private void drawActiveBlock(Graphics g) {
         Block AB = PARENT.Model().ActiveBlock;        
         int offset = PARENT.Model().Grid.HIDDEN_HEIGHT();
-        g.setColor(Block.colour(AB.type()));
         
         //if (PARENT.Model().ActiveBlockDirty) clearActiveBlock(g);
         
+        if (AB.shadowNeedsUpdate()) {
+            AB.updateShadow((int)(PARENT.Model().Grid.fastDrop(AB).getY()));
+        }
         for (int i = 0; i < AB.height(); ++i)
             for (int j = 0; j < AB.width(); ++j)
-                if (AB.data()[AB.state()][i][j])
+                if (AB.data()[AB.state()][i][j]) {
+                    g.setColor(Block.colour(BlockType.SHADOW));
+                    g.fillRect((25 * (j + AB.x())), (25 * (i + AB.shadowY() - offset)), 25, 25);
+                    g.setColor(Block.colour(AB.type()));
                     g.fillRect((25 * (j + AB.x())), (25 * (i + AB.y() - offset)), 25, 25);
+                }
+    }
+    private void drawPeaks(Graphics g) {
+        g.setColor(Color.RED);
+        for (int i = 0; i < PARENT.Model().Grid.WIDTH(); ++i)
+            g.fillRect(25 * i + 6, 25 * (PARENT.Model().Grid.peaks()[i] - PARENT.Model().Grid.HIDDEN_HEIGHT()) + 6, 12, 12);
     }
 	private void drawFps(Graphics g) {
 		g.setColor(Color.WHITE);
