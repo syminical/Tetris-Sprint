@@ -16,5 +16,6 @@ src/syminical/tetris_sprint/Input/InputBuffer.java
 src/syminical/tetris_sprint/Input/KeyAction.java
 src/syminical/tetris_sprint/MVC/GameController.java
 src/syminical/tetris_sprint/MVC/GameModel.java
+src/syminical/tetris_sprint/MVC/GameState.java
 src/syminical/tetris_sprint/MVC/GameView.java
 src/syminical/tetris_sprint/Tetris_Sprint.java
