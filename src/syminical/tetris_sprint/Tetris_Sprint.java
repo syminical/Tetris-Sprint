@@ -76,7 +76,7 @@ public class Tetris_Sprint {
             //Object Messaging, to trigger custom 'methods'.
         };
         
-        DevBox = new WindowBox(this, "Dev Box", null, null, null) {
+        DevBox = new WindowBox(this, "Dev Box", null, null, MainBox) {
             public void buildBox() {
                 this.setAlwaysOnTop(true);
                 addComponent(new JLabel("Welcome to the Dev Box! =D   [fps: " + GC.Model().fps + "]"));
