@@ -8,7 +8,7 @@ public abstract class Block {
 
 	protected int height, width, x, y, shadowY, state = 0, endState = 0;
     protected BlockType type;
-	protected boolean canTurn = false;
+	protected boolean canTurn = false, shadowNeedsUpdate = true;
 	protected boolean[][][] grid;//state, y, x
     protected Color BlockColour;
     /*protected boolean saved = false;
@@ -97,10 +97,10 @@ public abstract class Block {
 					turnLeft();
 	}*/
     
-    public void move(Point __) { x = (int)(__.getX()); y = (int)(__.getY()); shadowY = y; }
+    public void move(Point __) { x = (int)(__.getX()); y = (int)(__.getY()); shadowY = y; shadowNeedsUpdate = true; }
     public void updateShadow(int __) { shadowY = __; }
-	public void influenceX(int __) { x += __; }
-	public void influenceY(int __) { y += __;	}
+	public void influenceX(int __) { x += __; shadowNeedsUpdate = true; }
+	public void influenceY(int __) { y += __; }
 
 	public static Color colour(BlockType __) {
         if (__ == null) return Color.BLACK;
@@ -119,11 +119,9 @@ public abstract class Block {
 				return new Color(155, 155, 155);
 			case ZIG_LEFT:
 				return new Color(135, 135, 135);
-			case BLANK:
-				return Color.BLACK;
-			/*case 8:
+			case SHADOW:
 				return new Color(70, 70, 70);
-				//return Color.GRAY;*/
+				//return Color.GRAY;
 			default: 
 				return Color.WHITE;
 		}
@@ -136,5 +134,6 @@ public abstract class Block {
     public int width() { return width; }
     public int state() { return state; }
     public boolean[][][] data() { return grid; }
+    public boolean shadowNeedsUpdate() { return shadowNeedsUpdate; }
     public String toString() { return "x: [" + x + "] | y: [" + y + "] | shadowY: [" + shadowY + "] | height: [" + height + "] | width: [" + width + "] | state: [" + state + "]"; }
 }
