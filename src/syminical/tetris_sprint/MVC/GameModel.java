@@ -17,7 +17,8 @@ public class GameModel {
 	public double cstart, cend, cwstart, cwend, dtime, clock, rightDown = 0, leftDown = 0, upDown = 0, downDown = 0;
 	public String endTimeS = "";
 	public int fps = 0, directionTracker = 0;
-	public int rowsCap = 20, mode = 0;
+	public int rowsCap = 20;
+    public GameState State = GameState.START;
 
     public GameModel(GameController GM) { PARENT = GM; Grid = new BlockGrid(this); }
 
@@ -25,13 +26,14 @@ public class GameModel {
         active = true;
         clearGrid();
         newBlock();
-        mode = 1;
+        State = GameState.RUNNING;
     }
 	public void restart() {
 		Grid.reset();
 		InBuffer.clear();
 		clearGrid();
-		active = false;
+        State = GameState.RUNNING;
+		//active = false;
 		first = false;
 		done = false;
 		failed = false;
@@ -62,7 +64,7 @@ public class GameModel {
     public void goalReached() {
         done = true;
         active = false;
-        mode = 2;
+        State = GameState.END;
         endTimeTime = System.currentTimeMillis();
         endTime = System.currentTimeMillis() - startTime;
         //repaint();
@@ -199,7 +201,7 @@ public class GameModel {
         directionTracker = ((right)? -1 : ((up)? 2 : ((down)? -2 : 0)));
     }
     public void upPressed() {
-        InBuffer.add(InputActionType.TURN_LEFT);
+        InBuffer.add(InputActionType.TURN_RIGHT);
         up = true;
         directionTracker = 2;
         upDown = System.currentTimeMillis();
