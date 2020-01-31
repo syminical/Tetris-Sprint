@@ -18,7 +18,7 @@ public class GameController {
 		Model().active = true;
         Model().Grid.clear();
         Model().newBlock();
-        Model().mode = 1;
+        Model().State = GameState.RUNNING;
         
 		//View().repaint();
         
