@@ -104,11 +104,17 @@ public class BlockGrid {
         if (!success) B.turnLeft();
         return success;
     }
-    
+    private void updatePeaks() {
+        for (int i = 0; i < WIDTH; ++i)
+            if (grid[peaks[i]][i] == null) {
+                int j = peaks[i]+1;
+                while (j < HEIGHT && grid[j][i] == null) ++j;
+                peaks[i] = j;
+            }
+    }
     private void deFrag() {
 		//ActiveBlock.clearShape(grid, 1);
 		int precision = 0;
-		
 		while (ClearBuffer.size() > 0) {
 			for (int i = ClearBuffer.get(0) + precision; i > 3; i--)
 				//for (int j = 0; j < WIDTH; ++j)
@@ -121,19 +127,15 @@ public class BlockGrid {
 			++precision;
 			ClearBuffer.remove(0);
 		}
-
+        updatePeaks();
+        
 		if (rowsCleared >= PARENT.rowsCap) PARENT.goalReached();
 	}
-    
     private void clearRows() {
-        Integer __;
-		for (ListIterator<Integer> Itr = ClearBuffer.listIterator(ClearBuffer.size()); Itr.hasPrevious();) {
-            __ = Itr.previous();
-            for (int i = 0; i < WIDTH; ++i)
-                if (peaks[i] <= __) peaks[i] = peaks[i] + 1;
-			Arrays.fill(grid[__], null);//grid[__] = new BlockType[WIDTH];
-			++rowsCleared;
-		}
+        for (Integer __ : ClearBuffer) {
+            Arrays.fill(grid[__], null);
+            ++rowsCleared;
+        }
 		deFrag();
 	}
     public void checkRows(Block __) {
