@@ -6,7 +6,7 @@ public class GameController {
     private final Tetris_Sprint PARENT;
     private GameModel GModel;
     private GameView GView;
-    private double lastForceDrop = System.currentTimeMillis();
+    private double lastForceDrop = System.currentTimeMillis(), lastInput = lastForceDrop;
     
     public GameController(Tetris_Sprint P) {
         PARENT = P;
@@ -25,12 +25,14 @@ public class GameController {
         gameLoop();
 	}
     private void payload() {
-        Model().emptyInputBuffer();
+        //Model().emptyInputBuffer();
+        Model().moveActiveBlock();
         //Model().drawShapes();
         
         //if (Model().frameReady) 
             View().repaint();
-        Model().getInput();
+        if (System.currentTimeMillis() - lastInput > 100)
+            Model().getInput();
     }
     private void gameLoop() {
         final double SEG_TIME = 100; //apparently the max at which users still feel instant response time
