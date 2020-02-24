@@ -16,7 +16,8 @@ public class GameModel {
 	public double startTime, endTime, endTimeTime;
 	public double cstart, cend, cwstart, cwend, dtime, clock, rightDown = 0, leftDown = 0, upDown = 0, downDown = 0;
 	public String endTimeS = "";
-	public int fps = 0, directionTracker = 0;
+	public int fps = 0;
+    public InputActionType MovementTracker;
 	public int rowsCap = 20;
     public GameState State = GameState.START;
 
@@ -101,6 +102,26 @@ public class GameModel {
             }
         }
 	}
+    public void moveActiveBlock() {
+        if (InBuffer.size() > 0)
+            switch (InBuffer.next()) {
+                case LEFT:
+                    if (!Grid.detectLeft(ActiveBlock))
+                        ActiveBlock.influenceX(-1); break;
+                case RIGHT:
+                    if (!Grid.detectRight(ActiveBlock))
+                        ActiveBlock.influenceX(1); break;
+                case TURN_LEFT:
+                    Grid.tryLeftTurn(ActiveBlock); break;
+                case TURN_RIGHT:
+                    Grid.tryRightTurn(ActiveBlock); break;
+                case FAST_DROP:
+                    ActiveBlock.move(Grid.fastDrop(ActiveBlock));
+                    Grid.addBlock(ActiveBlock);
+                    newBlock();
+                default:
+            }
+    }
 	public void clearGrid() {
         Grid.clear();
 	}
@@ -174,51 +195,63 @@ public class GameModel {
 	}
 
 	public void getInput() {
-		if (directionTracker == 0) return;
-		else if (directionTracker == 1 && (System.currentTimeMillis() - rightDown) > 200) InBuffer.add(InputActionType.RIGHT);
-		else if (directionTracker == -1 && (System.currentTimeMillis() - leftDown) > 200) InBuffer.add(InputActionType.LEFT);
-        else if (directionTracker == 2 && (System.currentTimeMillis() - upDown) > 200) InBuffer.add(InputActionType.TURN_RIGHT);
-        else if (directionTracker == -2 && (System.currentTimeMillis() - downDown) > 200) InBuffer.add(InputActionType.TURN_LEFT);
+        if (MovementTracker == null) return;
+        
+        switch (MovementTracker) {
+            case RIGHT: if (System.currentTimeMillis() - rightDown > 200) InBuffer.add(InputActionType.RIGHT); return;
+            case LEFT: if (System.currentTimeMillis() - leftDown > 200) InBuffer.add(InputActionType.LEFT); return;
+            case TURN_RIGHT: if (System.currentTimeMillis() - upDown > 200) InBuffer.add(InputActionType.TURN_RIGHT); return;
+            case TURN_LEFT: if (System.currentTimeMillis() - downDown > 200) InBuffer.add(InputActionType.TURN_LEFT); return;
+            default: return;
+        }
 	}
     public void rightPressed() {
+        if (right) return;
+        
         InBuffer.add(InputActionType.RIGHT);
         right = true;
-        directionTracker = 1;
+        MovementTracker = InputActionType.RIGHT;
         rightDown = System.currentTimeMillis();
     }
     public void rightReleased() {
         right = false;
-        directionTracker = ((left)? -1 : ((up)? 2 : ((down)? -2 : 0)));
+        MovementTracker = ((left)? InputActionType.LEFT : ((up)? InputActionType.TURN_RIGHT : ((down)? InputActionType.TURN_LEFT : null)));
     }
     public void leftPressed() {
+        if (left) return;
+        
         InBuffer.add(InputActionType.LEFT);
         left = true;
-        directionTracker = -1;
+        MovementTracker = InputActionType.LEFT;
         leftDown = System.currentTimeMillis();
     }
     public void leftReleased() {
         left = false;
-        directionTracker = ((right)? -1 : ((up)? 2 : ((down)? -2 : 0)));
+        MovementTracker = ((right)? InputActionType.RIGHT : ((up)? InputActionType.TURN_RIGHT : ((down)? InputActionType.TURN_LEFT : null)));
     }
     public void upPressed() {
+        if (up) return;
+        
         InBuffer.add(InputActionType.TURN_RIGHT);
         up = true;
-        directionTracker = 2;
+        MovementTracker = InputActionType.TURN_RIGHT;
         upDown = System.currentTimeMillis();
     }
     public void upReleased() {
         up = false;
-        directionTracker = ((down)? -1 : ((right)? 2 : ((left)? -2 : 0)));
+        MovementTracker = ((down)? InputActionType.TURN_LEFT : ((right)? InputActionType.RIGHT : ((left)? InputActionType.LEFT : null)));
     }
     public void downPressed() {
+        if (down) return;
+        
         InBuffer.add(InputActionType.TURN_LEFT);
         down = true;
-        directionTracker = -2;
+        MovementTracker = InputActionType.TURN_LEFT;
         downDown = System.currentTimeMillis();
     }
     public void downReleased() {
         down = false;
-        directionTracker = ((up)? -1 : ((right)? 2 : ((left)? -2 : 0)));
+        MovementTracker = ((up)? InputActionType.TURN_RIGHT : ((right)? InputActionType.RIGHT : ((left)? InputActionType.LEFT : null)));
     }
     public void rReleased() { restart(); }
     public void cReleased() { swap(); }
@@ -264,7 +297,7 @@ public class GameModel {
 
 				if (!right) { InBuffer.add(new Movement(1)); rDown = System.currentTimeMillis(); }
 				right = true;
-				directionTracker = 1;
+				MovementTracker = 1;
 			}
 		});
 		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "notRight");
@@ -272,7 +305,7 @@ public class GameModel {
 			public void actionPerformed(ActionEvent e) {
 				right = false;
 
-				if (left) directionTracker = -1; else directionTracker = 0;
+				if (left) MovementTracker = -1; else MovementTracker = 0;
 			}
 		});
 		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "left");
@@ -281,7 +314,7 @@ public class GameModel {
 
 				if (!left) { InBuffer.add(new Movement(2)); lDown = System.currentTimeMillis(); }
 				left = true;
-				directionTracker = -1;
+				MovementTracker = -1;
 			}
 		});
 		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), "notLeft");
@@ -289,7 +322,7 @@ public class GameModel {
 			public void actionPerformed(ActionEvent e) {
 					left = false;
 
-					if (right) directionTracker = 1; else directionTracker = 0;
+					if (right) MovementTracker = 1; else MovementTracker = 0;
 			}
 		});
 		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "up");
@@ -307,16 +340,16 @@ public class GameModel {
 			public void actionPerformed(ActionEvent e) {
 
 				if (!down) { InBuffer.add(new Movement(0)); dDown = System.currentTimeMillis(); }
-				else if (activeShape.detectDown(grid, 0) && (System.currentTimeMillis() - rDown) > 1000) { directionTracker = 0; return; }
+				else if (activeShape.detectDown(grid, 0) && (System.currentTimeMillis() - rDown) > 1000) { MovementTracker = 0; return; }
 				down = true;
-				directionTracker = 2;
+				MovementTracker = 2;
 			}
 		});
 		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), "notDown");
 		this.getActionMap().put("notDown", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				down = false;
-				directionTracker = 0;
+				MovementTracker = 0;
 			}
 		});
 		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "space");
